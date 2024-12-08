@@ -1,0 +1,138 @@
+#------------------------------------------------------------------------------
+#
+# HEC simulation
+#
+# This file contains simulation descriptions from 1 theoretical
+# experiment exposing mice to a 75 ppm over a simulation of 2 weeks.  
+# Copyright (c) 1993-2017 Free Software Foundation, Inc.
+#------------------------------------------------------------------------------
+
+Integrate (Lsodes, 1e-7, 1e-7, 1);
+
+SetPoints ("Rat.HEC.out", "Rat.HEC.dat", 0,
+
+    Ve_CV,    
+    Ve_CFat,
+    Ve_CLung,
+    Ve_CLiv, 
+    Ve_AUrineMAmg,
+     
+    
+    M_QCC, 
+    M_QPC, 
+
+    M_QFatC, 
+    M_QLivC, 
+    M_QSptC, 
+
+    M_VFatC, 
+    M_VLivC, 
+    M_VRptC, 
+    M_VLungC, 
+
+    M_lnPBC,     
+    M_lnPFatC,      
+    M_lnPLivC,     
+    M_lnPRptC,     
+    M_lnPSptC,     
+    M_lnPLungC,      
+    
+    M_lnVmaxC,     
+    M_lnKMC,     
+    
+    M_lnVmax2C,
+    M_lnKM2C,
+    
+    M_lnVmaxLungC,     
+    M_lnKMLungC,     
+    
+    M_lnFmeteC,
+    M_lnKmaC,
+    M_lnKpgaC,    
+    
+     ###### POPULATION VARIANCES
+   
+    V_QCC, 
+    V_QPC, 
+
+    V_QFatC, 
+    V_QLivC, 
+    V_QSptC, 
+    
+    V_VFatC, 
+    V_VLivC, 
+    V_VRptC, 
+    V_VLungC, 
+
+    V_lnPBC, 
+    V_lnPFatC, 
+    V_lnPLivC, 
+    V_lnPRptC, 
+    V_lnPSptC, 
+    V_lnPLungC,  
+    
+    V_lnVmaxC,  
+    V_lnKMC,  
+    V_lnVmax2C,  
+    V_lnKM2C,  
+    V_lnVmaxLungC	,  
+    V_lnKMLungC,  
+    
+    V_lnFmeteC,
+    V_lnKmaC  ,
+    V_lnKpgaC );
+
+ 
+    Distrib( QCC     , TruncNormal_v,  M_QCC   , V_QCC  ,  0.2, 1.8);
+    Distrib( QPC     , TruncNormal_v,  M_QPC   , V_QPC  ,  0.2, 1.8);
+
+    Distrib( QFatC     , TruncNormal_v,  M_QFatC     , V_QFatC   ,  0.2, 1.8);
+    Distrib( QLivC     , TruncNormal_v,  M_QLivC     , V_QLivC   ,  0.7, 1.3);
+    Distrib( QSptC     , TruncNormal_v,  M_QSptC     , V_QSptC   ,  0.7, 1.3);
+
+    Distrib ( VFatC     , TruncNormal_v,  M_VFatC     , V_VFatC      ,  0.2, 1.8);
+    Distrib ( VLivC  	  , TruncNormal_v,  M_VLivC  	  , V_VLivC      ,  0.7, 1.3);
+    Distrib ( VRptC     , TruncNormal_v,  M_VRptC     , V_VRptC      ,  0.7, 1.3);
+    Distrib ( VLungC    , TruncNormal_v,  M_VLungC    , V_VLungC     ,  0.7, 1.3);
+
+    Distrib(	lnPBC,	    TruncNormal_v,	M_lnPBC	    , V_lnPBC,	     -1.8, 1.8);
+    Distrib(	lnPFatC,	  TruncNormal_v,	M_lnPFatC	  , V_lnPFatC,	   -1.8, 1.8);
+    Distrib(	lnPLivC,	  TruncNormal_v,	M_lnPLivC  	, V_lnPLivC,	   -1.8, 1.8);
+    Distrib(	lnPRptC,	  TruncNormal_v,	M_lnPRptC	  , V_lnPRptC,	   -1.8, 1.8);
+    Distrib(	lnPSptC,	  TruncNormal_v,	M_lnPSptC	  , V_lnPSptC,	   -1.8, 1.8);
+    Distrib(	lnPLungC,	  TruncNormal_v,	M_lnPLungC	, V_lnPLungC,	   -1.8, 1.8);							
+   
+    Distrib(	lnVmaxC,	    TruncNormal_v, 	M_lnVmaxC	    , V_lnVmaxC,	     -1.8, 1.8	);
+    Distrib(	lnKMC,	      TruncNormal_v,	M_lnKMC	      , V_lnKMC,   	     -1.8, 1.8	);
+   
+    Distrib(	lnVmax2C,	    TruncNormal_v, 	M_lnVmax2C	  , V_lnVmax2C,	     -2.4, 2.4  );
+    Distrib(	lnKM2C,	      TruncNormal_v, 	M_lnKM2C	    , V_lnKM2C,	       -2.4, 2.4	);
+   
+    Distrib(	lnVmaxLungC,	TruncNormal_v, 	M_lnVmaxLungC	, V_lnVmaxLungC,	 -2.4, 2.4);
+    Distrib(	lnKMLungC,	  TruncNormal_v, 	M_lnKMLungC	  , V_lnKMLungC,	   -2.4, 2.4);
+
+    Distrib(  lnFmeteC,   TruncNormal_v,  M_lnFmeteC    , V_lnFmeteC,    -3.9, 2.2);
+    Distrib(  lnKmaC,     TruncNormal_v,  M_lnKmaC      , V_lnKmaC,      -1.8, 1.8);
+    Distrib(  lnKpgaC,    TruncNormal_v,  M_lnKpgaC     , V_lnKpgaC,     -1.8, 1.8);
+
+  
+#---------------------------------------------------------
+# The next Simulation is run to predict AUC
+# at 75 ppm for 2 weeks .
+#---------------------------------------------------------
+
+Simulation { # 1:
+
+  BWmeas = 0.27;
+  Species =2 ; 
+  Sex = 1;
+  ExpoInduc = 1.0;
+  
+expoday = PerDose (75, 24, 0, 6);    # PerDose(exposure event, initial time, exposure duration);
+expowk  = PerDose (1.0, 168, 0, 120); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+expodur = 1;  # faction of study duration has exposure  (e.g., out of study week(s), the number of weeks had exposure) 
+  
+  Print (AUCArt, AUCR, DailyAMetLiverVol, DailyAMetTotalBW34, 336);
+}
+
+END.

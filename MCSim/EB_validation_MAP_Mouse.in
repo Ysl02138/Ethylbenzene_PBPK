@@ -1,0 +1,327 @@
+#-------------------
+# # Mouse :  MAP validation
+#-------------------
+Integrate (Lsodes, 1e-6, 1e-6, 1);
+
+SetPoints (
+  "EB_validation_MAP_Mouse.out", 
+  "EB_validation_MAP_Mouse.dat",  
+ 0,	
+ Ve_CV,    
+ Ve_CFat,
+ Ve_CLung,
+ Ve_CLiv,
+ 
+ M_QCC,  
+ M_QPC,  
+
+ M_QFatC,  
+ M_QLivC, 
+ M_QSptC, 
+
+ M_VFatC, 
+ M_VLivC, 
+ M_VRptC, 
+ M_VLungC, 
+
+ M_lnPBC, 
+ M_lnPFatC, 
+ M_lnPLivC, 
+ M_lnPRptC, 
+ M_lnPSptC, 
+ M_lnPLungC, 
+
+ M_lnVmaxC,
+ M_lnKMC,
+
+ M_lnVmax2C, 
+ M_lnKM2C, 
+
+ M_lnVmaxLungC, 
+ M_lnKMLungC , 
+
+ M_lnVmaxRptC,
+ M_lnKMRptC  ,
+ 
+
+###### POPULATION VARIANCES
+ V_QCC, 
+ V_QPC, 
+
+ V_QFatC, 
+ V_QLivC, 
+ V_QSptC, 
+ 
+ V_VFatC, 
+ V_VLivC, 
+ V_VRptC, 
+ V_VLungC , 
+
+ V_lnPBC, 
+ V_lnPFatC, 
+ V_lnPLivC, 
+ V_lnPRptC, 
+ V_lnPSptC, 
+ V_lnPLungC , 
+
+ V_lnVmaxC , 
+ V_lnKMC , 
+ V_lnVmax2C, 
+ V_lnKM2C, 
+ V_lnVmaxLungC, 
+ V_lnKMLungC, 
+
+ V_lnVmaxRptC, 
+ V_lnKMRptC); 
+
+    Distrib (QCC,TruncNormal_v,  M_QCC  , V_QCC ,  0.2, 1.8);
+    Distrib (QPC,TruncNormal_v,  M_QPC  , V_QPC ,  0.2, 1.8);
+    
+    Distrib ( QFatC,TruncNormal_v,  M_QFatC,V_QFatC  ,  0.2, 1.8);
+    Distrib ( QLivC,TruncNormal_v,  M_QLivC,V_QLivC  ,  0.7, 1.3);
+    Distrib ( QSptC,TruncNormal_v,  M_QSptC,V_QSptC  ,  0.7, 1.3);
+    
+    Distrib ( VFatC, TruncNormal_v,  M_VFatC,  V_VFatC, 0.2, 1.8);
+    Distrib ( VLivC, TruncNormal_v,  M_VLivC,  V_VLivC, 0.7, 1.3);
+    Distrib ( VRptC, TruncNormal_v,  M_VRptC,  V_VRptC, 0.7, 1.3);
+    Distrib ( VLungC,TruncNormal_v,  M_VLungC, V_VLungC,0.7, 1.3);
+    
+    Distrib(	lnPBC,	    TruncNormal_v,	M_lnPBC	    , V_lnPBC,	     -1.8, 1.8);
+    Distrib(	lnPFatC,	  TruncNormal_v,	M_lnPFatC   , V_lnPFatC,	   -1.8, 1.8);
+    Distrib(	lnPLivC,	  TruncNormal_v,	M_lnPLivC  	, V_lnPLivC,	   -1.8, 1.8);
+    Distrib(	lnPRptC,	  TruncNormal_v,	M_lnPRptC   , V_lnPRptC,	   -1.8, 1.8);
+    Distrib(	lnPSptC,	  TruncNormal_v,	M_lnPSptC   , V_lnPSptC,	   -1.8, 1.8);
+    Distrib(	lnPLungC,	  TruncNormal_v,	M_lnPLungC	, V_lnPLungC,	   -1.8, 1.8);							
+    
+    Distrib(	lnVmaxC,	    TruncNormal_v, 	M_lnVmaxC	, V_lnVmaxC,	     -1.8, 1.8	);
+    Distrib(	lnKMC,	      TruncNormal_v,	M_lnKMC	   ,V_lnKMC,   	     -1.8, 1.8	);
+    
+    Distrib(	lnVmax2C,	    TruncNormal_v, 	M_lnVmax2C, V_lnVmax2C,	     -2.4, 2.4  );
+    Distrib(	lnKM2C,	      TruncNormal_v, 	M_lnKM2C	, V_lnKM2C,	       -2.4, 2.4	);
+    
+    Distrib(	lnVmaxLungC,	TruncNormal_v, 	M_lnVmaxLungC	, V_lnVmaxLungC,	  -1.8, 1.8	);
+    Distrib(	lnKMLungC,	  TruncNormal_v, 	M_lnKMLungC,    V_lnKMLungC,      -1.8, 1.8	);
+    
+    Distrib  (lnVmaxRptC,	 TruncNormal_v, 	M_lnVmaxRptC, V_lnVmaxRptC,	 -1.8, 1.8);
+    Distrib  (lnKMRptC,    TruncNormal_v, 	M_lnKMRptC	, V_lnKMRptC,	   -1.8, 1.8);
+  
+  
+  ############### DATA USED IN VALIDATION #############
+
+
+
+
+Simulation {###
+      
+      ####  Male Mouse,   original from Tardiff 2006 (used by  Nong 2007 Figure 2)
+      # Experiment,      75 ppm - 4 hr, male
+      
+      BWmeas = 0.0225;
+      Species =3 ; 
+      Sex = 1;
+      ExpoInduc = 1;
+      
+      expoday  = PerDose (75, 24, 0, 4);  # PerDose (exposure event, initial time, exposure duration);  
+      expowk = PerDose (1.0, 168,  0, 4);  # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+      expodur = PerDose (1.0, 384, 0, 4);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+
+      Print (CV, 2.022 , 3.027 , 4.018 , 4.043 , 4.086 , 4.129 , 4.168 , 4.204);
+      Data  (CV, 0.606 , 0.623 , 0.711 , 0.566 , 0.283 , 0.156 , 0.128 , 0.088);
+      
+
+    }    #end of Simulation  Experiment  (75 ppm - 4 hr, male) 
+    
+    
+    
+Simulation {   
+      ####  Male Mouse,     original from Tardiff 2006 (used by  Nong 2007 Figure 2)
+      # Experiment,        200 ppm - 4 hr, male
+      
+      BWmeas = 0.0225;
+      Species =3 ; 
+      Sex = 1;
+      ExpoInduc = 1;
+      
+      expoday  = PerDose (200, 24, 0, 4);  # PerDose (exposure event, initial time, exposure duration);  
+      expowk = PerDose (1.0, 168,  0, 4);  # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+      expodur = PerDose (1.0, 384, 0, 4);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+      
+      Print(CV, 2.022 , 3.032 , 4.026 , 4.176 , 4.348 , 4.663 , 4.999);  
+      Data (CV, 2.191 , 2.281 , 2.148 , 0.672 , 0.283 , 0.186 , 0.128);  
+
+    }   #end of Simulation  Experiment  (200 ppm - 4 hr, male) 
+    
+    
+Simulation {   
+      ####  Male Mouse,    original from Tardiff 2006 (used by  Nong 2007 Figure 2)
+      # Experiment,       500 ppm - 4 hr, male
+      
+      BWmeas = 0.0225;
+      Species =3 ; 
+      Sex = 1;
+      ExpoInduc = 1;
+      
+      expoday = PerDose (500, 24, 0, 4);   # PerDose (exposure event, initial time, exposure duration); 
+      expowk  = PerDose (1.0, 168,  0, 4); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+      expodur = PerDose (1.0, 384, 0, 4);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+      
+      Print(CV, 2.021, 3.021, 4.035, 4.33, 4.66, 5.015, 5.506); 
+      Data (CV,15.993, 19.767, 10.431, 2.913, 0.587, 1.014, 0.149);   
+
+    }   #end of Simulation  Experiment  (500 ppm - 4 hr, male) 
+    
+    
+Simulation {   
+      ####  Male Mouse,    original from Tardiff 2006 (used by  Nong 2007 Figure 2)
+      # Experiment,       1000 ppm - 4 hr, male
+      
+      
+      BWmeas = 0.0225;
+      Species =3 ; 
+      Sex = 1;
+      ExpoInduc = 1;
+      
+      expoday = PerDose (1000, 24, 0, 4);  # PerDose (exposure event, initial time, exposure duration);  
+      expowk  = PerDose (1.0, 168,  0, 4); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+      expodur = PerDose (1.0, 384, 0, 4);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+      
+      Print(CV, 2.02, 3.02, 4.03, 4.5, 5, 5.5, 6);  
+      Data (CV, 61.689, 75.813, 66.705, 41.15, 28.356, 22.328, 13.742); 
+      
+    }   #end of Simulation  Experiment  (1000 ppm - 4 hr, male) 
+    
+    
+Simulation {   
+      ####  Male Mouse,   original from Tardiff 2006 (used by  Nong 2007 Figure 3)
+      # Experiment,      75 ppm - 6 hr, male
+      
+      BWmeas = 0.0225;
+      Species =3 ; 
+      Sex = 1;
+      ExpoInduc = 1;
+      
+      expoday =PerDose (75, 24, 0, 6);    # PerDose (exposure event, initial time, exposure duration);
+      expowk  =PerDose (1.0, 168,  0, 6); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+      expodur =PerDose (1.0, 384, 0, 6);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+      
+      Print(CV, 3, 5, 6.04, 6.08, 6.13, 6.2);   
+      Data (CV,0.553, 0.419, 0.364, 0.137, 0.071, 0.036); 
+      
+    }   #end of ###  Experiment --     75 ppm - 6 hr, male, Figure 3
+    
+    
+Simulation {   
+      ####  Male Mouse,     original from Tardiff 2006 (used by  Nong 2007 Figure 3)
+      # Experiment,        750 ppm - 6 hr, male
+      
+      BWmeas = 0.0225;
+      Species =3 ; 
+      Sex = 1;
+      ExpoInduc = 1;
+      
+      expoday =PerDose (750, 24, 0, 6);   # PerDose (exposure event, initial time, exposure duration); 
+      expowk  =PerDose (1.0, 168,  0, 6); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+      expodur =PerDose (1.0, 384, 0, 6);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+      
+      Print(CV, 3, 5, 6, 6.667, 7.333, 8);  
+      Data (CV,37.13, 39.375, 32.927, 13.125, 10.407, 2.329); 
+    
+    }   #end of ###  Experiment  --     750 ppm - 6 hr, male
+    
+    
+Simulation {   
+      ####  Female Mouse,      original from Tardiff 2006 (used by  Nong 2007 Figure 4)
+      # Experiment,           75 ppm - 6 hr, female over 7 days and only last day data reported
+      
+      BWmeas = 0.0205;
+      Species =3 ; 
+      Sex = 2;
+      ExpoInduc = 1;
+      
+      expoday =PerDose (75, 24, 0, 6);    # PerDose (exposure event, initial time, exposure duration);
+      expowk  =PerDose (1.0, 168,  0, 6); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+      expodur =PerDose (1.0, 384, 0, 6);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+      
+      Print(CV, 3, 5, 6.04, 6.08, 6.13, 6.2);    
+      Data (CV,0.57, 0.72, 0.54, 0.26, 0.12, 0.06); 
+      
+    }   #end of ###  Experiment -- 75 ppm - 6 hr, female,  over 7 days and only last day data reported
+    
+    
+Simulation {   
+      ####  female Mouse,   original from Tardiff 2006 (used by  Nong 2007 Figure 4)
+      # Experiment,        750 ppm - 6 hr, female,  over 7 days and only last day data reported
+      
+      BWmeas = 0.0205;
+      Species =3 ; 
+      Sex = 2;
+      ExpoInduc = 1;
+      
+      expoday = PerDose (750, 24, 0, 6);   # PerDose (exposure event, initial time, exposure duration); 
+      expowk  = PerDose (1.0, 168,  0, 6); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+      expodur =PerDose (1.0, 168, 0, 6);   # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+      
+      Print(CV, 3, 5, 6, 6.67, 7.34, 8);    
+      Data (CV, 46, 34.73, 27.98, 5.33, 0.57, 0.02); 
+      
+    }   #end of ###  Experiment  --     750 ppm - 6 hr,  over 7 days and only last day data reported, female
+    
+
+Simulation {   
+      # female mouse, original from Fuciarelli 2000
+      # Experiment  --     750 ppm for 6 hrs/day up for 12 days	EB in venous blood, fat  and only last day data reported
+  
+      
+      BWmeas = 0.0215;
+      Species =3 ; 
+      Sex = 2;
+      ExpoInduc = 3;
+        
+        
+      expoday =PerDose (750, 24, 0, 6);  # PerDose (exposure event, initial time, exposure duration);  
+      expowk  =PerDose (1.0, 168,  0, 6);# PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration) 
+      expodur =PerDose (1.0, 384, 0, 6); # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+      
+      Print (CV, 6.268 , 6.269 , 6.27 , 6.368 , 6.369 , 6.37 , 6.484 , 6.485 , 6.586 , 6.601 , 6.602 , 6.734 , 6.736 , 6.752 , 7.051 , 7.053 , 7.069 , 7.518 , 7.519 , 7.52 , 8.018 , 8.019 , 8.02 , 9.036 , 9.068 , 9.085 , 10.02 , 10.034 , 10.069 , 11.034 , 11.036 , 11.052 , 12.053 , 12.068 , 12.069 , 14.051 , 14.052 , 14.053 , 15.084 , 15.086); 
+      Data  (CV, 11.1 , 9.37 , 8.05 , 7.58 , 6.41 , 5.64 , 6.65 , 5.1 , 4.67 , 3.43 , 3.37 , 2.6 , 2.67 , 4.34 , 1.55 , 3.25 , 2.59 , 0.433 , 0.429 , 0.671 , 0.152 , 0.0412 , 0.294 , 0.0349 , 0.102 , 0.027 , 0.0145 , 0.0252 , 0.0102 , 0.00302 , 0.00453 , 0.00535 , 0.00179 , 0.0072 , 0.00233 , 0.00162 , 0.00148 , 0.00218 , 0.00188 , 0.00197);
+
+      Print (CFat, 6.268 , 6.269 , 6.27 , 6.368 , 6.369 , 6.37 , 6.484 , 6.485 , 6.52 , 6.584 , 6.602 , 6.603 , 6.734 , 6.735 , 6.753 , 7.051 , 7.052 , 7.07 , 7.518 , 7.519 , 7.52 , 8.018 , 8.019 , 8.02 , 9.034 , 9.069 , 9.086 , 10.018 , 10.035 , 10.07 , 11.034 , 11.035 , 12.051 , 12.069 , 12.07 , 14.051 , 15.084 , 15.085);
+      Data  (CFat, 608 , 442 , 233 , 441 , 288 , 238 , 235 , 151 , 502 , 182 , 238 , 168 , 130 , 114 , 111 , 84.6 , 74.2 , 170 , 50.4 , 43.1 , 4.02 , 35.5 , 16.1 , 1.09 , 0.381 , 12.1 , 0.131 , 0.437 , 0.705 , 0.456 , 0.554 , 0.435 , 1.02 , 0.783 , 0.622 , 0.541 , 0.543 , 0.315);
+      
+      Print (CLiv, 6.268 , 6.269 , 6.27 , 6.368 , 6.369 , 6.37 , 6.484 , 6.486 , 6.519 , 6.586 , 6.601 , 6.602 , 6.734 , 6.736 , 6.752 , 7.051 , 7.053 , 7.069 , 7.518 , 7.519 , 8.02);
+      Data  (CLiv, 10.8 , 8.54 , 8.9 , 6.16 , 6.76 , 4.45 , 4.94 , 4.48 , 6.81 , 2.84 , 2.38 , 1.53 , 0.871 , 1.32 , 3.79 , 0.529 , 0.431 , 1.53 , 0.0574 , 0.0466 , 0.0559);  
+      
+      Print (CLung,  6.268 , 6.269 , 6.27 , 6.368 , 6.369 , 6.37 , 6.484 , 6.485 , 6.52 , 6.584 , 6.602 , 6.603 , 6.734 , 6.735 , 6.753 , 7.051 , 7.052 , 7.07 , 7.518 , 7.519 , 8.018);
+      Data  (CLung,  7.79 , 1.72 , 0.825 , 12.1 , 2.14 , 0.458 , 5.75 , 1.27 , 1.66 , 0.852 , 0.499 , 0.186 , 0.343 , 0.247 , 0.328 , 0.276 , 0.236 , 0.941 , 0.18 , 0.0214 , 0.265);
+
+   }   #end of 6 hrs/day, 12 days	EB in venous blood, fat, liver and lung, only last day data reported
+ 
+
+Simulation {   
+  ####  male Mouse,     Original from Fuciarelli 2000
+  # Experiment  --     75 ppm for 6 hrs/day up for 12 days	EB in venous blood, fat  and only last day data reported
+  
+  BWmeas = 0.0297;
+  Species =3 ; 
+  Sex = 1;
+  ExpoInduc = 1;
+  
+  expoday =PerDose (75, 24, 0, 6);   # PerDose (exposure event, initial time, exposure duration); 
+  expowk  =PerDose (1.0, 168,  0, 6);# PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration) 
+  expodur =PerDose (1.0, 384, 0, 6); # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+  
+  Print (CV,   6.251 , 6.252 , 6.253 , 6.334 , 6.335 , 6.37 , 6.418 , 6.419 , 6.436 , 6.501 , 6.502 , 6.52 , 6.684 , 6.685 , 6.686 , 6.834 , 6.835 , 6.853 , 7.018 , 7.019 , 7.02 , 7.334 , 7.335 , 7.336 , 7.668 , 7.685 , 7.686 , 7.934 , 7.935);
+  Data  (CV , 0.0624 , 0.0458 , 0.0261 , 0.0395 , 0.0301 , 0.0218 , 0.0277 , 0.0174 , 0.0206 , 0.0173 , 0.0132 , 0.0119 , 0.0163 , 0.0122 , 0.00872 , 0.0159 , 0.00519 , 0.00701 , 0.00502 , 0.00369 , 0.00346 , 0.00344 , 0.00228 , 0.00212 , 0.002 , 0.00261 , 0.00144 , 0.00335 , 0.00164);
+
+  Print (CFat ,  6.251 , 6.252 , 6.253 , 6.334 , 6.37 , 6.418 , 6.419 , 6.501 , 6.502 , 6.52 , 6.684 , 6.685 , 6.834 , 6.835 , 6.853 , 7.018 , 7.019 , 7.02 , 7.334 , 7.935);
+  Data  (CFat ,  15 , 6.98 , 3.05 , 13.9 , 9.62 , 9.74 , 9.73 , 5.79 , 3.15 , 6.32 , 5.72 , 2.76 , 6.47 , 0.485 , 3.38 , 3.65 , 0.989 , 0.401 , 0.289 , 0.295);
+  
+}   #end of 6 hrs/day, 12 days	EB in venous blood, fat only last day data reported
+
+
+End. 
+
+
+
+
+
