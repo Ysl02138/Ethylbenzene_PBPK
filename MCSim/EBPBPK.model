@@ -1,0 +1,636 @@
+#########  Bayesian PBPK model for ethylbenzene (EB) #######################################################
+# Author: Jason YS Lin (US EPA) and NH Hsieh (Texas A&M, now with California EPA). Updated: Nov 27, 2024.  #                                                            #                                   #
+# Acknowldegement: The authors would like to thank Dr Frederic Bois (Symcyps, Inc, UK) for valuable support#
+# and comments tO make the current work possible.                                                          #
+############################################################################################################
+
+
+##########################  Description ########################################
+#  An universal (standardized) PBPK model was developed for EB toxicokinetics to
+#  facilitate inter-species extrapolation across all three specie. As the model
+#  structures for existing models are different among mice (Nong 2007), 
+#  rats and humans : rats (Tardif 1997, Haddad 1999, Krishnan 2002) and humans 
+#  (Sweeney 2008 and 2015,Marchand 2015, Marchand, 2016). The current work also included 
+#  translation of AcslX to R/MCSim. Major changes in the current work include:
+#
+#  Modification of the mice model by (Nong 2007) in the current work:
+#          - Changed body weight scaling from 0.74 to 0.75 in the current study.  
+#          - Add low affinity hepatic metabolism for mice
+#
+#  Modification of the rat model (Tardif 1996, 1997, and Haddad 1999)
+#          - Add low affinity hepatic metabolism for rats
+#          - Add lung metabolism in the lung for rats
+#          - Changed QRpt and VSpt to scale fractional flows and volume, Lung 
+#            for slowly perfused tissue; and added VLung for lung compartment
+#          - Oral ingestion route is dropped from this refined model that focused on inhalation exposure  
+#          - The arterial blood (Cart) was universally estimated as Cart = (ALung/VLung)/(PLung/PB)
+#            to be consistent with mice by (Nong 2007) and humans/rats (Tardif 1997, Sweeney 2015)
+#          - Update Marchand 2015 molar ratio estimation from using molecular weight of EB (MWEB) instead of molecular weight of 1 phenylethanol, the 
+#            immediate metabolite of EB (MW1PE) as: change from "Fmete*(MWMA/MW1PE)" to "Fmete*(MWMA/MWEB)" (Line 551) to be consistent with Toluene  
+#            and Xylene, as also presented in 2015 Marchand.
+#
+#  Modification of human models by (Tardif 1996, Tardif 1997, Marchand 2015, Marchand 2016)
+#          - Add low affinity hepatic metabolism for humans
+#          - Add lung metabolism in humans. Note that lung metabolism was also presented in (Sweeney 2015), who proposed  
+#            VmaxLungC = 0.17  (mg/hr/BW^0.75) but did not specify lung volume. 
+#	         - Add excretion of urinary metabolites of EB mandelic acid (MA) and phenylglyoxylic acid  (PGA) (Urinary sub-compartment analysis) 
+#            model by (Marchand 2015, Marchand 2016)
+#          - Akin to rats, molar ratio estimation is also updated for humans from "Fmete*(MWMA/MW1PE)" to "Fmete*(MWMA/MWEB)" (Line 551)
+#
+#  For all models for mice, rats and humans:
+#          - time in h
+#          - volumes in L
+#          - mass in mg
+#          - concentration in mg/L
+#
+#   Abbreviation
+#   Fat = Adipose 
+#   Liv = Liver
+#   RPT = richly/rapidly perfused tissue (e.g., kidney and brain)
+#   Spt = slowly perfused tissues (e.g., Bone)
+#
+#   The parameter with prefix "ln", using lnPBC	as an example, representing a natural log of the model parameter like PBC (blood/air partition)
+#
+################################################################################
+#                   Variable Specification                                     #
+################################################################################
+
+################################################################################
+#          State Variables (Dependent Variables in ODE)                        #   
+################################################################################
+States = {
+#-- EB inhalation
+  AInh,     # Amount of inhaled EB (mg)
+  AExh,  	  # Amount of exhaled EB (mg)
+  AExhExp,  # Amount exhaled during exposure [to calc. retention] (mg)
+  ACh, 	    # Amount in closed chamber -- mice and rats only  (mg)
+  
+#-- EB in the organs 
+  ALiv,     # Amount of EB in liver (mg)
+  ARpt,     # Amount of EB in richly perfused tissues, Rpt (mg)
+  ASpt,     # Amount of EB in slowly perfused tissues, SPT (mg)
+  AFat,     # Amount of EB in fat (mg)
+  ALung,		# Amount in respiratory tissue (mg)
+  
+#-- Oxidation Metabolism
+  AMetLiv1,	  # Amount metabolized by P450 in liver (mg), high affinity
+  AMetLiv2,	  # Amount metabolized by P450 in liver (mg), low affinity. 
+  ATotMetLiv, # Total amount metabolized by P450 in liver (mg) both high and low affinity.
+  AMetLung,	  # Amount metabolized in the lung (mg)
+  AMetRpt,	  # Amount metabolized in the Rpt (mg) --- mice only
+  AMetTotal,  # Amt. of total metabolites = AMetLiv1+AMetLiv2+AMetLung+AMetRpt (mg). 
+  
+#-- urinary metabolites of EB
+  AUrnMA,     # Amount of MA excreted to urine (mg)
+  APGA,       # Amount of PGA excreted to urine (or produced) (mg)
+  AMA,        # Amount of MA produced and resides in the body (mg)
+  
+# Other Dose metrics
+  AUCArt,    # AUC of arterial blood EB (mg-hr/L)
+  AUCCV,      # AUC of venous blood EB (mg-hr/L)
+  AUCR,       # AUC of richly perfused tissue (mg-hr/L)
+  AUCCVLiv    # AUC of liver venous blood EB (mg-hr/L)
+};
+
+################################################################################
+#                       Outputs from the Model                                 #
+################################################################################
+
+Outputs = {
+
+  CalvPPM, # alveolar air (ppm)  
+  Calv,	   # alveolar air (mg/L)
+  Conc,    # inhalation exposure dose metric indicator (unitless)
+  CInh,	   # exposure (mg/L)  
+  CV,	     # overall venous concentration (mg/L)
+  Cart,	   # arterial blood concentration (mg/L)
+  CLung,   # concentration in lung (mg/L)
+  CLiv,	   # concentration in liver (mg/L)
+  CRpt,	   # concentration in Rpt tissues (mg/L)
+  CSpt,	   # concentration in SPT tissues (mg/L)
+  CFat,	   # concentration in fat tissues (mg/L)  
+  CVLiv,	 # venous concentration in liver (mg/L)
+  CVRpt,	 # venous concentration in Rpt tissues (mg/L)
+  CVSpt,   # venous concentration in SPT tissues (mg/L)
+  CVFat,   # venous concentration in fat tissues (mg/L)
+
+  # QFatCtmp,  # Scaled fat blood flow
+  # QLivCtmp,  # Scaled liver blood flow
+  # QRptCtmp,  # Scaled richly perfused blood flow
+  # QSptCtmp,  # Scaled richly perfused blood flow
+  
+  TotDose,               # Total inhaled dose (mg)
+  DailyAMetTotalBW34,    # Daily total metabolites produced scaled by BW of 0.75 (mg/kg/d)
+  DailyAMetLiverVol,     # AMetLiv by lung volume per day (mg/L/d)
+  AUrineMAmg,            # Urine MA excreted into urine (mg)
+  AMetTotalmg,           # Total amount of EB metabolites produced (mg)  
+  Cavg,                  # Not used in the current study. Average venous EB concentration (mg/L)  
+  ChamberConc,           # Not used in the current study. Chamber conc (ppm)  
+  MassBalEB              # mass balance check  
+
+};
+
+
+################################################################################
+#          Input Variables (Independent Variables in ODE)                        #
+################################################################################
+
+Inputs = {
+#-- EB dosing
+expoday, # PerDose (exposure event, initial time, exposure duration);
+expowk,  # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+expodur  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+};
+
+# Flag for species, sex -- these are global parameters
+Species = 3;   # 1 = human, 2 = rat, 3 = mouse  
+BW	= 0.0;     # Species-specific defaults during initialization, updated by measured value by individual study 
+Sex = 1;	     # 1 = male, 2 = female, 0.5 = unknown or mixed
+ExpoInduc = 1 ;# 1: EB < 750 ppm;  # 3 (=19.2/6.39): EB >= 750 ppm  
+  
+################################################################################
+#               Potentially measured covariates (constants)                    #
+################################################################################
+
+BWmeas	= 0.0;	# measured body weight, updated by measured value by individual study 
+
+# Closed chamber parameters
+NRodents	= 0;	# No. of rodent, updated by measured value by individual study  
+VChC	= 1;	    # chamber size (L) , updated by measured value by individual study 
+lnkLossC	= 0;	# rate of EB loss from the chamber, updated by measured value by individual study upon data availability  
+
+# EB Molecular Weights
+MWEB = 106.16;  # g/mol, EB
+# MW1PE = 122.16; # g/mol, 1-phenylethanol (1PE), urine metabolite of EB oxidation
+MWMA = 152.15;  # mandelic acid, g/mol, another urinary metabolite of EB oxidation 
+MWPGA = 150.13; # PGA, g/mol, a major urinary metabolite of EB oxidation
+
+################################################################################
+#                   Global Model Parameters                                    #
+################################################################################
+#hese are the actual model parameters used in "dynamics." Values that are 
+# assigned in the "initialize" section, are all set to 1 to avoid confusion.
+################################################################################
+
+
+# Flows
+QC = 1;	# Cardiac output (L/hr)
+QP = 1; # respiratory ventilation
+  
+QFatCtmp	= 1;	# Scaled fat blood flow
+QLivCtmp	= 1;	# Scaled liver blood flow
+QSptCtmp	= 1;	# Scaled richly perfused blood flow
+
+# Flow Rates (L/hr), set to default value of  0 and will be re-calculated using Supplemental Table S1 formula 
+
+
+# Blood Flows to Tissues (L/hr), set to default value of  1 and will be re-calculated using Supplemental Table S1 formula 	
+  # QFat	= 0.0;	# fat --------------- redefined in Dynamcic session
+  # QLiv	= 0.0;  # liver ------------- redefined in Dynamcic session
+  # QRpt  = 0.0;  # RPT tissue--------- redefined in Dynamcic session
+  # QSpt	= 0.0;	# SPT tissue--------- redefined in Dynamcic session
+  
+# Volumes (L), set to default value of  1	and will be re-calculated using Supplemental Table S1 formula 
+  VFat =1;      # fat   
+  VLiv =1; 	    # liver 
+  VRpt =1;      # RPT tissue
+  VSpt =1;      # SPT tissue
+  VLung =1;     # lung
+
+# EB-specific, set to default value of  1	and  will be re-calculated using Supplemental Table S1 formula 
+  PB =1;        # blood/air partition coefficient  
+  PFat =1;      # fat/air partition coefficient 
+  PLiv =1;      # liver/air partition coefficient 
+  PRpt =1;      # RPT/air partition coefficient   
+  PSpt =1;      # SPT/air partition coefficient   
+  PLung =1;     # lung/air partition coefficient  
+  Vmax =1; 	    # VMax high affinity (mg/hr)
+  Vmax2 =1; 	  # VMax low affinity (mg/hr); 
+  KM =1; 	      # hepatic KM for high affinity (e.g., CYP2E1, mg/L)
+  KM2 =1; 	    # hepatic KM for low affinity (e.g., non-CYP2E1 P450, mg/L). 
+  VmaxRpt =1;   # VMax for renal EB oxidation (mg/hr)
+  KMRpt =1;   	# KM for renal EB oxidation(mg/L)
+  VmaxLung =1; 	# VMax for Tracheo-bronchial EB oxidation (mg/hr)
+  KMLung =1; 	  # KM for Tracheo-bronchial EB oxidation (mg/L) 
+  Fmete =1;     # Stoichiometric yield fraction to produce mandelic acid (MA)
+  Kma =1;       # Urinary MA excretion rate (1/hr) 
+  Kpga =1;      # Conversion rate of MA to PGA 
+
+
+################################################################################
+#   Population Mean Parameters (M_...) for generic physiological parameters    #
+################################################################################
+
+# scaling parameter for blood flow to tissues
+  M_QCC	= 1.0;    # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+  M_QPC	= 1.0;    # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+
+  M_QFatC	= 1.0;	# initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+  M_QLivC	= 1.0;  # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+  M_QSptC = 1.0;  # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+  
+# scaling parameter for tissue volumes 	
+  M_VLivC = 1.0;	# initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+  M_VRptC = 1.0;  # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+  M_VFatC = 1.0;  # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+  # VSptC. Note that VSpt is calculated as the difference between total tissue volume and the sum of tissues other than VSpt  
+  M_VLungC = 1.0; # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+
+################################################################################
+#       Population Mean Parameters (M_...) for EB-specific parameters          #
+################################################################################
+
+#	Partition coefficients
+  M_lnPBC	=    1.0;  # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4) 
+  M_lnPFatC	=  1.0;  # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+  M_lnPLivC	=  1.0;  # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+  M_lnPRptC	=  1.0;  # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+  M_lnPLungC=  1.0;  # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+  M_lnPSptC	=  1.0;  # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
+
+#	Metabolism
+  M_lnVmaxC	  =  1.0;  # initial default value, updated later by species-specific baseline value & MCMC analysis (see Supplemental Table S1-S4)
+  M_lnVmax2C	=  1.0;  # initial default value, updated later by species-specific baseline value & MCMC analysis (see Supplemental Table S1-S4)
+  M_lnVmaxLungC	= 1.0; # initial default value, updated later by species-specific baseline value & MCMC analysis (see Supplemental Table S1-S4)
+  M_lnVmaxRptC =  1.0; # initial default value, updated later by species-specific baseline value & MCMC analysis (see Supplemental Table S1-S4)
+
+  M_lnKMC	=  1.0;      # initial default value, updated later by species-specific baseline value & MCMC analysis (see Supplemental Table S1-S4)
+  M_lnKM2C	=  1.0;    # initial default value, updated later by species-specific baseline value & MCMC analysis (see Supplemental Table S1-S4)
+  M_lnKMLungC	=  1.0;  # initial default value, updated later by species-specific baseline value & MCMC analysis (see Supplemental Table S1-S4)
+  M_lnKMRptC	=  1.0;  # initial default value, updated later by species-specific baseline value & MCMC analysis (see Supplemental Table S1-S4)
+  
+#urine metabolites
+  M_lnFmeteC = 0.0;  # initial default value, updated later by species-specific baseline value & MCMC analysis (see Supplemental Table S1-S4)
+  M_lnKpgaC =  1.0;  # initial default value, updated later by species-specific baseline value & MCMC analysis (see Supplemental Table S1-S4)
+  M_lnKmaC =  1.0;   # initial default value, updated later by species-specific baseline value & MCMC analysis (see Supplemental Table S1-S4)
+  
+################################################################################
+#                For  study-level parameters                                   #
+################################################################################
+# Please refer to Section 2 of the Supplemental material for more statistical information on the estimate of study-level parameter values using 
+# population-level parameter distributions. In brief, at the study level, parameters are drawn from the population distribution. Please see 
+# MCMC input files such as "EBHumanMCMC_4880.in" for details (located under the subfolder of "Human" under the folder of "MCMC replication analysis")    
+# Note that the number "4880"  corresponds to the random seed number 4880 used in MCMC calibration. 
+# These study-level parameter values are then used for in the PK analysis as shown below in the "Initial"" and "Dynamic" sections.
+
+# scaling parameter for tissue blood flow		  
+  QCC	=  1; # initial default value, updated later by MCMC analysis 
+  QPC	=  1; # initial default value, updated later by MCMC analysis
+
+  QFatC =  1; # initial default value, updated later by MCMC analysis	
+  QLivC =  1; # initial default value, updated later by MCMC analysis
+  QRptC =  1; # initial default value, updated later by MCMC analysis
+  QSptC =  1; # initial default value, updated later by MCMC analysis	
+  
+# scaling parameter for tissue volume	
+  VFatC  = 1; # initial default value, updated later by MCMC analysis  
+  VLivC  = 1; # initial default value, updated later by MCMC analysis 	
+  VRptC  = 1; # initial default value, updated later by MCMC analysis  
+  VSptC  = 1; # initial default value, updated later by MCMC analysis  
+  VLungC = 1; # initial default value, updated later by MCMC analysis 
+  
+################################################################################
+
+  # scaling parameter for partition coefficients of EB		
+  lnPBC	= 0.0 ;	  # initial default value, updated later by MCMC analysis
+  lnPFatC	= 0.0;	# initial default value, updated later by MCMC analysis
+  lnPLivC	= 0.0;	# initial default value, updated later by MCMC analysis
+  lnPRptC	= 0.0;	# initial default value, updated later by MCMC analysis
+  lnPLungC = 0.0; # initial default value, updated later by MCMC analysis
+  lnPSptC	= 0.0;	# initial default value, updated later by MCMC analysis
+  
+  # scaling parameter for EB Metabolism	
+  lnVmaxC	= 0.0;	  # initial default value, updated later by MCMC analysis
+  lnVmax2C	= 0.0;  # initial default value, updated later by MCMC analysis
+  lnKMC	= 0.0;	    # initial default value, updated later by MCMC analysis
+  lnKM2C	= 0.0;	  # initial default value, updated later by MCMC analysis
+  lnVmaxLungC =0.0; # initial default value, updated later by MCMC analysis
+  lnKMLungC = 0.0;  # initial default value, updated later by MCMC analysis
+  lnVmaxRptC  = 0.0;# initial default value, updated later by MCMC analysis
+  lnKMRptC  = 0.0;  # initial default value, updated later by MCMC analysis
+  
+  # scaling parameter for urine metabolite sub-model
+  lnFmeteC=0.0;     # initial default value, updated later by MCMC analysis
+  lnKmaC =0.0;      # initial default value, updated later by MCMC analysis
+  lnKpgaC=0.0;	  	# initial default value, updated later by MCMC analysis  
+  
+################################################################################
+#                   Population Variance Parameters (V_...)                     #
+################################################################################
+# Please refer to the Supplemental material (Section 2) for more statistical details on estimating study-level parameter values using 
+# population-level parameter distributions. Additionally, please aslo see MCMC input files such as "EBHumanMCMC_4880.in" for details (located 
+# under the subfolder of "Human" under the folder of "MCMC re-analysis"). 
+# Note that the number "4880"  corresponds to the random seed number 4880 used in MCMC calibration. 
+
+  #	Physiological parameters
+  V_QCC	= 1.0;    # initial default value, updated later by MCMC analysis 
+  V_QPC	= 1.0;    # initial default value, updated later by MCMC analysis
+  
+  V_QFatC	= 1.0;  # initial default value, updated later by MCMC analysis
+  V_QLivC	= 1.0;  # initial default value, updated later by MCMC analysis
+  V_QSptC	= 1.0;  # initial default value, updated later by MCMC analysis
+  
+  V_VFatC = 1.0;  # initial default value, updated later by MCMC analysis 
+  V_VLivC = 1.0;	# initial default value, updated later by MCMC analysis
+  V_VRptC = 1.0;  # initial default value, updated later by MCMC analysis
+  V_VLungC = 1.0; # initial default value, updated later by MCMC analysis
+  
+################################################################################
+
+  #	Partition coefficients
+  V_lnPBC	= 1.0;    # initial default value, updated later by MCMC analysis     
+  V_lnPFatC	= 1.0;  # initial default value, updated later by MCMC analysis
+  V_lnPLivC	= 1.0;  # initial default value, updated later by MCMC analysis
+  V_lnPLungC	= 1.0;# initial default value, updated later by MCMC analysis
+  V_lnPRptC	= 1.0;  # initial default value, updated later by MCMC analysis
+  V_lnPSptC	= 1.0;  # initial default value, updated later by MCMC analysis
+  
+  #	Metabolism
+  V_lnVmaxC	= 1.0;      # initial default value, updated later by MCMC analysis
+  V_lnVmax2C	= 1.0;    # initial default value, updated later by MCMC analysis
+  V_lnVmaxLungC	= 1.0;  # initial default value, updated later by MCMC analysis
+  V_lnVmaxRptC	= 1.0;  # initial default value, updated later by MCMC analysis
+  
+  V_lnKMC	= 1.0;    # initial default value, updated later by MCMC analysis
+  V_lnKM2C	= 1.0;  # initial default value, updated later by MCMC analysis
+  V_lnKMLungC	= 1.0;# initial default value, updated later by MCMC analysis
+  V_lnKMRptC	= 1.0;# initial default value, updated later by MCMC analysis
+  
+  #urine metabolites
+  V_lnFmeteC=1.0;  # initial default value, updated later by MCMC analysis 
+  V_lnKpgaC=1.0;   # initial default value, updated later by MCMC analysis
+  V_lnKmaC=1.0;    # initial default value, updated later by MCMC analysis
+  
+################################################################################
+#          Measurement error variances for output (Ve_...)                     #
+################################################################################
+
+  Ve_CalvPPM =1; # measurement error for alveolar EB (in the unit of mg/L), updated later by MCMC input file
+  Ve_CV  =1;     # measurement error for venous blood EB (in the unit of ppm), updated later by MCMC input file
+  Ve_Cart =1;    # measurement error for arterial  blood EB (in the unit of ppm), updated later by MCMC input file
+  Ve_CFat =1;    # measurement error for fat EB (in the unit of ppm), updated later by MCMC input file
+  Ve_CLung =1;   # measurement error for lung EB (in the unit of ppm), updated later by MCMC input file
+  Ve_CLiv  =1;   # measurement error for liver EB (in the unit of ppm), updated later by MCMC input file
+  Ve_AUrineMAmg =1; # measurement error for total amount of urinary MA excreted into urine, updated later by MCMC input file
+
+################################################################################# 
+#              Default Exposure Input Parameters                                #
+#################################################################################  
+
+#-- EB dosing
+expoday = 1;  # default values and will be updated by species- and study-specific exposure input values (e.g., EBMouseMCMC.in)
+expowk  = 1;  # default values and will be updated by species- and study-specific exposure input values (e.g., EBMouseMCMC.in)
+expodur = 1;  # default values and will be updated by species- and study-specific exposure input values (e.g., EBMouseMCMC.in)
+
+################################################################################
+# Closed chamber-related parameters. Not used in the current study 
+# as closed chamber data not systematically available for all three species. 
+  Rodents	= 1;	# Number of rodents in closed chamber data 
+  VCh	= 1;	    # Chamber volume for closed chamber data 
+  kLoss	= 1;	  # Rate constant for closed chamber air loss 
+  CC 	= 0.0;	  # Initial chamber concentration (ppm) 
+################################################################################
+
+
+################################################################################
+#                       Initialize the Model                                   #
+################################################################################
+Initialize {
+
+  # Body weight use measured value (BWmeas), otherwise use default of 0.03 kg for mouse, 0.27 kg for rat, 80 kg for human
+  BW = (BWmeas > 0.0 ? BWmeas : (Species == 1 ? 80: (Species == 2 ? 0.27 : 0.03)));  # measured bod weight 
+  QC = pow(BW, 0.75) * (Species == 1 ? 18: (Species == 2 ? 15 :15.6)) * QCC;         # calculation of cardiac output (L/hr)
+  QP = pow(BW, 0.75) * (Species == 1 ? 18: (Species == 2 ? 15 :23)) * QPC;           # calculation of respiratory ventilation (L/hr)
+
+  # blood flow to tissue (L/hr) as (species-specific) fraction of blood flow
+  QFatCtmp = (Species == 1 ?0.06: (Species == 2 ? 0.07:  0.09)) *QFatC;               # blood flow to fat
+  QLivCtmp = (Species == 1 ?0.26: (Species == 2 ? 0.25 : 0.25)) *QLivC;               # blood flow to liver
+  # QRptCtmp = (Species == 1 ?0.44 : (Species == 2 ? 0.51 :0.51)) *QRptC;             # blood flow to RPT (including kidney) -- calculated as difference between total and sum of otheres
+  QSptCtmp = (Species == 1 ?0.25 : (Species == 2 ? 0.15 :0.15)) *QSptC;               # blood flow to SPT (including kidney) 
+  
+  # tissue volume (L) as (species-specific) fraction of body weight (BW, kg)
+  VFat = BW* (Species == 1 ? 0.19: (Species == 2 ? 0.08:  0.10)) *VFatC;                  # fat tissue
+  VLiv = BW* (Species == 1 ? 0.026 : (Species == 2 ? 0.04 : 0.055))*VLivC;                # liver tissue
+  VRpt = BW* (Species == 1 ? 0.05 : (Species == 2 ? 0.05:  0.05))*VRptC;                  # RPT tissue
+  VLung = BW* (Species == 1 ? 0.0076: (Species == 2 ? 0.0050: 0.0073))*VLungC;            # lung tissue
+  VSpt = (BW*(Species == 1 ? 0.894 : (Species == 2 ? 0.91 : 0.91)) - VFat - VLiv - VRpt - VLung);   # SPT tissue
+  
+  # Partition coefficient 	
+  PB =   exp(lnPBC) * (Species == 1 ? 28: (Species == 2 ? 42.7 : (Sex == 1? 52.8: 65.4))); # blood/air partition coefficient
+  PFat = (exp(lnPFatC)/PB)  * (Species == 1 ? 1556: (Species == 2 ?  1556 : 1417)) ;       # fat/blood partition coefficient
+  PLiv = (exp(lnPLivC)/PB) * (Species == 1 ? 83.8 : (Species == 2 ? 83.8: 72.9));          # liver/blood partition coefficient
+  PRpt = (exp(lnPRptC)/PB) * (Species == 1 ? 60.3: (Species == 2 ? 60.3: 60.37));          # RPT/blood partition coefficient
+  PSpt = (exp(lnPSptC)/PB) * (Species == 1 ? 26: (Species == 2 ? 26 : 45.57));             # SPT/blood partition coefficient
+  PLung = (exp(lnPLungC)/PB) * (Species == 1 ? 63.84: (Species == 2 ? 63.84 : 63.84));     # lung/blood  partition coeff. assuming same for all
+  
+  
+######### Metabolism parameters################################################# 
+
+# Liver metabolism (mg/hr) 
+  # High affinity metabolism
+  Vmax = pow(BW, 0.75) * exp(lnVmaxC)* (Species == 1 ? 6.39 : (Species == 2 ? 6.39 : (ExpoInduc == 1?  6.39: 19.2))) ;   
+  KM = exp(lnKMC) *(Species == 1 ? 1.04: (Species == 2 ? 1.04: (Sex == 1? 1.04: 1.04)));                                   
+  
+  # Low affinity EB oxidation by other P450 isozyme to oxidative metabolites in liver (mg/hr)
+  Vmax2 = pow(BW, 0.75)*exp(lnVmax2C)*(Species == 1 ? 28: (Species == 2 ? 28 : (Sex == 1? 28: 28  ))); 
+  KM2 = exp(lnKM2C) *(Species == 1 ? 41.4 : (Species == 2 ? 41.4: (Sex == 1? 41.4: 41.4)));
+  
+  # Lung metabolism  (mg/hr)
+  VmaxLung = pow(BW, 0.75)*exp(lnVmaxLungC)* (Species == 1 ? 0.17: (Species == 2 ? 1.3: (Sex == 1? 13.4 : 13.4))); 
+  KMLung = exp(lnKMLungC) *(Species == 1 ? 4.96: (Species == 2 ?  4.96: (Sex == 1? 5.57 : 4.35)));
+  
+  # Rpt metabolism (mg/hr) --- mice only 
+  VmaxRpt = pow(BW, 0.75)*exp(lnVmaxRptC)*(Species == 1 ? 0: (Species == 2 ? 0: (Sex == 1? 17.4 : 12.9))); 
+  # set to default value of  zero for human and rats, as  RPT metabolism is not modeled for rats and human due to lack of appropriate data 
+  
+  KMRpt = exp(lnKMRptC) *(Species == 1 ? 1.04 : (Species == 2 ? 1.04 : (Sex == 1? 2.33 : 1.15))); 
+  # Although humans and rats don't have RPT metabolism, here it is assumed Km for RPT is the same as the liver to prevent computation error as   
+  # as Km is located in the denominator of the Michaelis Menton metabolic equation 
+
+  # Urinary metabolite sub-compartment analysis  
+  Fmete = (exp(lnFmeteC)/(1 + exp(lnFmeteC))) * (Species == 1 ? 1 : (Species == 2 ? 1 : 0.0)); 
+  # assuming rats are the same as humans
+  # Baseline value for Fmete = 0.9 represents stoichiometry yield (%) of mandelic acid (MA) + PGA for humans same as the value used by (Marchand 2015, Marchand 2016). Original data were from (Engstrom 1984). 
+  # In contrast, Fmete is about 30% for rats including MA (approximately 15-23%) and PGA (10%) (Climie 1983, Engstrom 1984 and 1985).
+  
+  Kma = exp(lnKmaC)/pow(BW, 0.30) * (Species == 1 ? 0.33 : (Species == 2 ? 0.33 : 0.0)); 
+  # Assuming MA excretion constant (Kma,1/kg-hr) into urine for rats is initially the same as human value (Marchand 2015).
+  
+  Kpga = exp(lnKpgaC)/pow(BW, 0.30) * (Species == 1 ? 0.972 : (Species == 2 ? 0.972: 0.0 )); 
+  # Assuming MA-to-PGA conversion rate (Kpg, 1/kg-hr) is initially the same as human value reported by (Marchand 2015).
+  
+  # Closed chamber 
+  Rodents = (CC > 0 ? NRodents : 0.0);                # number of rodents
+ 	VCh = (CC > 0 ? VChC - (Rodents * BW) : 1.0);       # volume of closed exposure chamber (L)
+  
+  # EB lost from exposure chamber (e.g., attached to the wall, etc.)
+  kLoss = exp(lnkLossC);                              # EB lost volume of closed exposure chamber (L)  
+  
+  # EB amount in chamber
+  ACh = (CC * VCh * MWEB)/ 24450.0;                   # EB amount in the exposure chamber (mg)  
+
+
+######################## Reserved for batch calculation for HEC ############################
+
+# state variable assigend value of zero
+   # AInh= 0.0;     # Amount of inhaled EB (mg)
+   # AExh= 0.0;  	  # Amount of exhaled EB (mg)
+   # AExhExp= 0.0;  # Amount exhaled during exposure [to calc. retention] (mg)
+
+#-- EB in the organs 
+   # ALiv= 0.0;     # Amount of EB in liver (mg)
+   # ARpt= 0.0;     # Amount of EB in richly perfused tissues- Rpt (mg)
+   # ASpt= 0.0;     # Amount of EB in slowly perfused tissues- SPT (mg)
+   # AFat= 0.0;     # Amount of EB in fat (mg)
+   # ALung= 0.0;		# Amount in respiratory tissue
+  
+#-- Oxidation Metabolism
+   # AMetLiv1= 0.0;	# Amount metabolized by P450 in liver (mg)- high affinity
+   # AMetLiv2= 0.0;	# Amount metabolized by P450 in liver (mg)- low affinity. 
+   # AMetLung= 0.0;	# Amount metabolized in the lung (mg)
+   # AMetRpt= 0.0;	# Amount metabolized in the Rpt (mg) --- mice only
+   # AMetTotal= 0.0;# Amt. of total metabolites = AMetLiv1+AMetLiv2+AMetLung+AMetRpt (mg).  
+  
+#-- urinary metabolites of EB
+   # AUrnMA= 0.0;   # Amount of MA excreted to urine (mg)
+   # APGA= 0.0;     # Amount of PGA excreted to urine (or produced) (mg)
+   # AMA= 0.0;      # Amount of MA produced and resides in the body (mg)
+  
+# Other Dose metrics
+   # AUCArt= 0.0;    # AUC of arteriak blood EB (mg-hr/L)
+   # AUCCV= 0.0;      # AUC of venous blood EB (mg-hr/L)
+   # AUCR= 0.0;       # AUC of richly perfused tissue (mg-hr/L)
+   # AUCCVLiv= 0.0;   # AUC of liver venous blood EB (mg-hr/L)
+######################################################################################
+};
+
+########### End of Initialization ####################################################
+
+Dynamics { 
+
+  QFat = (QFatCtmp) * QC; # 
+  QLiv = (QLivCtmp) * QC; # 
+  QSpt = (QSptCtmp) * QC; # 
+ 
+  QRpt = QC  - QLiv - QSpt - QFat; # blood flow to RPT, calculated as difference between total blood flow and flow to tissed stated above
+  QRptCtmp= QRpt/QC;
+ 
+  # Inhalation route
+  Conc = expoday *expowk* expodur;                                    # exposure scenarios setup (e.g., EB exposure [ppm], frequency, etc)
+  CInh = (CC > 0 ? ACh/VCh: Conc*MWEB/24450.0);                       # airborne EB levels in mg/L, CC: exposure chamber concentration 
+  ChamberConc =   (ACh< 1.0e-15 ? 1.0e-15 : (ACh/VCh)*(24450.0/MWEB));# airborne EB in chamber - ppm
+  dt(ACh) = (Rodents * (QP * Calv - QP * ACh/VCh)) - (kLoss * ACh);   # change in airborne EB in exposure chamber (mg/hr)
+  # CInhPPM = (ACh< 1.0e-15 ? 1.0e-15 : ACh/VCh*24450.0/MWTCE);       # CInhPPM Only used for CC inhalation
+  
+  # tissue blood (mg/L)
+  CRpt = (ARpt/VRpt);         # EB in RPT tissue
+  CSpt = (ASpt/VSpt);         # EB in SPT tissue
+  CFat = (AFat/VFat);         # EB in Fat tissue
+  CLiv = (ALiv/VLiv);         # EB in liver 
+  CLung = (ALung/VLung);      # EB in lung
+  
+  # tissue venous blood (mg/L)
+  CVRpt = (ARpt/VRpt)/ PRpt;  # EB in venous blood leaving the RPT tissue
+  CVSpt = (ASpt/VSpt)/ PSpt;  # EB in venous blood leaving the SPT tissue
+  CVFat = (AFat/VFat)/ PFat;  # EB in venous blood leaving the Fat tissue
+  CVLiv = (ALiv/VLiv) / PLiv; # EB in venous blood leaving the liver tissue
+  
+  CV = (QFat*CVFat + QSpt*CVSpt + QLiv*CVLiv + QRpt*CVRpt)/ QC;  # EB in mixed venous blood (mg/L)
+  Cart =ALung / (VLung*PLung);                                   # EB in arterial blood (mg/L)   
+  Calv = Cart /PB;                                               # alveolar EB conc. (mg/L)
+  CalvPPM = (Calv < 1.0e-15 ? 1.0e-15 : Calv*(24.45*1000)/MWEB); # alveolar EB conc. (ppm)
+
+# oxidative metabolism (mg/hr)
+  RAMetLiv1 = (Vmax * CVLiv) / (KM + CVLiv);                     # high affinity hepatic oxidative metabolism rate (mg/hr)
+  RAMetLiv2 = (Vmax2 * CVLiv) / (KM2 + CVLiv);                   # low affinity hepatic oxidative metabolism rate (mg/hr)
+  RAMetLung = (VmaxLung * Cart)/(KMLung + Cart);                 # lung oxidative metabolism rate (mg/hr)    
+  RAMetRpt = ( VmaxRpt * CVRpt) / (KMRpt + CVRpt);               # RPT tissue oxidative metabolism rate (mg/hr) (mice only)
+  dt(AMetLiv1) = RAMetLiv1;                                      # Amount of oxidative metabolites produced by high affinity pathway, mg
+  dt(AMetLiv2) = RAMetLiv2;                                      # Amount of oxidative metabolites produced by low affinity pathway, mg
+  dt(AMetLung) = RAMetLung;                                      # Amount of oxidative metabolites produced by lung, mg 
+  dt(AMetRpt) =  RAMetRpt;                                       # Amount of oxidative metabolites produced by RPT (mice only), mg  
+  
+# Amount of EB in tissues  
+  dt(ALung) = (QC*CV)-(QC*Cart)+(QP *CInh)-(QP *(Cart/PB)) - RAMetLung;   # Amount of EB in lung tissue (Alung, mg)
+  dt(ALiv) = (QLiv * (Cart - CVLiv)) - RAMetLiv1 - RAMetLiv2;             # Amount of EB in liver tissue (ALiv, mg)
+  dt(ASpt) = QSpt * (Cart - CVSpt);                                       # Amount of EB in SPT tissue (ASpt, mg)
+  dt(ARpt) = QRpt * (Cart - CVRpt) - RAMetRpt;                            # Amount of EB in Rpt tissue (ARpt, mg)
+  dt(AFat) = QFat*(Cart - CVFat);                                         # Amount of EB in fat tissue (AFat, mg)
+
+# Total intake from inhalation (mg)
+  RInh = QP * CInh;                         # Rate of EB inhaled (RInh, mg/hr)
+  dt(AInh) = RInh;                          # Amount of EB inhaled (AInh,mg)
+  
+  RAExh = QP*Calv;  
+  dt(AExh) = RAExh;                         # Amount of EB exhaled (AExh, mg)
+  dt(AExhExp) = (CInh > 0 ? RAExh : 0);     # Amount exhaled during exposure (AExhExp, mg)
+
+  # Total oxidation metabolism in liver (high and low affinity), lung and Rpt
+  dt(AMetTotal)= RAMetLiv1 + RAMetLiv2 + RAMetLung + RAMetRpt; 
+  # total metabolites (AMetTotal, mg) including liver, lung (all three species) and RPT (mice only)  
+  
+  dt(ATotMetLiv) = RAMetLiv1 + RAMetLiv2 ;  # total liver metabolites (mg) from both high and low affinity hepatic pathways
+  AMetTotalmg = AMetTotal*1;                # total metabolites (mg) same as above. For the purpose of ikelihood calculation.
+  RMA = (RAMetLiv1 + RAMetLiv2 + RAMetLung + RAMetRpt)*Fmete*(MWMA/MWEB) - AMA*Kma-AMA*Kpga; 
+  # Rate of MA produced (RMA, mg/hr)   
+  
+  dt(AMA) = RMA;                            # Amount of MA produced (AMA, mg)    
+  dt(APGA)= AMA*Kpga;                       # Amount of PGA produced (APGA, mg)
+  dt(AUrnMA)=  AMA*Kma;                     # Amount of MA excreted to urine (AUrnMA, mg)
+  AUrineMAmg =  AUrnMA*1;                   # Amount of MA excreted to urine (AUrineMAmg, mg) same as above. For ikelihood calculation.
+  dt(AUCArt) = Cart;                        # AUC of arterial blood EB (AUCArt, mg-hr/L)
+  dt(AUCCV) = CV;                           # AUC of venous blood EB (AUCCV, mg-hr/L)
+  dt(AUCR) = CRpt;                          # AUC of richly perfused tissue (AUCR, mg-hr/L)
+  dt(AUCCVLiv) = CVLiv;                     # AUC of liver venous blood (AUCCVLiv, mg-hr/L) 
+};
+
+######## End of Dynamics ######################################################
+CalcOutputs{
+  
+################################################################################
+#                        Dose Metrics other than AUC                           #
+################################################################################
+
+# Amount of EB absorbed by inhalation 
+  TotDose = AInh;                                       # total exposure dose = inhaled dose (mg)
+  
+# Oxidative metabolites  
+  DailyAMetTotalBW34 = AMetTotal*24/(t*pow(BW, 0.75));  # total EB metabolic dose (inhalation+oral) by BW0.75 (mg/kg/d) 
+  DailyAMetLiverVol = ATotMetLiv*24 / (VLiv*t);         # Daily EB oxidative metabolites produced by liver volume (mg/L/d) 
+  
+# Averge concentrations
+  Cavg=AUCCV/t;                                         # Average venous blood (mg/L)
+
+  
+################################################################################
+#               Static outputs for comparison to data                          #
+################################################################################
+ 
+  # finalizing calculation for tissue concentrations estimated previously to prevent integration error
+  CVLiv = (CVLiv < 1.0e-15 ? 1.0e-15 : CVLiv);  
+  CVSpt = (CVSpt < 1.0e-15 ? 1.0e-15 : CVSpt);
+  CVRpt = (CVRpt < 1.0e-15 ? 1.0e-15 : CVRpt);
+  CVFat = (CVFat < 1.0e-15 ? 1.0e-15 : CVFat);
+  CSpt = (CSpt < 1.0e-15 ? 1.0e-15 : CSpt);
+  CRpt = (CRpt < 1.0e-15 ? 1.0e-15 : CRpt);
+    
+  CalvPPM = (Calv < 1.0e-15 ? 1.0e-15 : Calv * (24450.0 / MWEB));
+  Calv = (Calv < 1.0e-15 ? 1.0e-15 : Calv);
+  Cart = (Cart < 1.0e-15 ? 1.0e-15 :   Cart);
+  CV = (CV < 1.0e-15 ? 1.0e-15 : CV);
+
+  CLiv = (CLiv < 1.0e-15 ? 1.0e-15 : CLiv);
+  CFat = (CFat < 1.0e-15 ? 1.0e-15 : CFat);
+  CLung = (CLung < 1.0e-15 ? 1.0e-15 : CLung);
+  ChamberConc = (ChamberConc < 1.0e-15 ? 1.0e-15 : ChamberConc);
+
+  AUrineMAmg = (AUrineMAmg < 1.0e-15 ? 1.0e-15 : AUrineMAmg);
+  AMetTotalmg = (AMetTotalmg < 1.0e-15 ? 1.0e-15 : AMetTotalmg);
+
+### Mass Balance for EB ##############################################################################
+# Total in tissues                                                                                   #  
+  MassBalEB =   (TotDose - AExh - (ALung + ALiv + ARpt + ASpt+ AFat) - AMetTotal)/(TotDose +1.0e-15);
+###################################################################################################### 
+};
+
+End.
