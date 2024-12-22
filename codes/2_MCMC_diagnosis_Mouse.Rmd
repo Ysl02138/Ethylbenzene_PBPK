@@ -1,0 +1,142 @@
+# ---
+# title: "EB - Markov chain Monte Carlo CalibMouseion Diagnosis"
+# author: "Yu-Sheng Lin and Nan-Hung Hsieh" 
+# date: "2023/02/05 (update: `r Sys.Date()`)"
+# output: 
+#  html_document:
+# fig_caption: yes  
+# ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd('..')
+wd <- getwd()
+knitr::opts_knit$set(root.dir =  wd)
+```
+
+# Prerequisites
+```{r, include=FALSE}
+source("MCSim/function.R")
+getwd()
+```
+
+# Import the R packages
+```{R message=FALSE, warning=FALSE}
+library(tidyverse)
+library(rstan)
+library(bayesplot)
+library(coda)
+library(corrplot)
+library(sensitivity)
+library(pksensi)
+library(data.table)
+library(ggplot2)
+library(GGally)
+theme_set(theme_bw())
+```
+
+#### MCMC diagnostic analysis ###
+```{r, eval=F}
+Mousejob1 <- fread("outputs/EBMouseMCMC_4880.out")|> as.data.frame()
+Mousejob2 <- fread("outputs/EBMouseMCMC_3365.out")|> as.data.frame()
+Mousejob3 <- fread("outputs/EBMouseMCMC_5916.out")|> as.data.frame()
+Mousejob4 <- fread("outputs/EBMouseMCMC_6734.out")|> as.data.frame()
+Mouse_x <- mcmc_array(data = list(Mousejob1, Mousejob2, Mousejob3, Mousejob4))
+```
+
+# Size of output summary
+```{r}
+dim(Mouse_x)
+```
+
+
+
+# Andrew Gelman Scale Reduction Factor
+```{r}
+Mousemonitor <-monitor(Mouse_x, digits=4, probs = c(0.025, 0.5, 0.975), warmup = floor(dim(Mouse_x)[1]/2))
+print(Mousemonitor)
+```
+
+# Dalaijamts MPSRF
+```{r}
+MousejobMPSRF1 = as.mcmc(fread("outputs/EBMouseMCMC_4880.out") |> as.data.frame(), header=T) 
+MousejobMPSRF2 = as.mcmc(fread("outputs/EBMouseMCMC_3365.out") |> as.data.frame(), header=T) 
+MousejobMPSRF3 = as.mcmc(fread("outputs/EBMouseMCMC_5916.out") |> as.data.frame(), header=T) 
+MousejobMPSRF4 = as.mcmc(fread("outputs/EBMouseMCMC_6734.out") |> as.data.frame(), header=T) 
+
+x1Mouse <- MousejobMPSRF1[,2:97 , drop=FALSE]
+x2Mouse <- MousejobMPSRF2[,2:97 , drop=FALSE]
+x3Mouse <- MousejobMPSRF3[,2:97 , drop=FALSE]
+x4Mouse <- MousejobMPSRF4[,2:97 , drop=FALSE]
+
+combined_Mouse = mcmc.list(x1Mouse,x2Mouse,x3Mouse,x4Mouse) 
+gelman.diag(combined_Mouse, autoburnin=TRUE, multivariate=TRUE)
+```
+
+# traceplot and density diagnosis (every 10th sample from last half of MCMMC runs shown) #############
+```{r, eval=F}
+Mousejob1 <- fread("outputs/EBMouseMCMC_4880.out")|> as.data.frame()
+Mousejob2 <- fread("outputs/EBMouseMCMC_3365.out")|> as.data.frame()
+Mousejob3 <- fread("outputs/EBMouseMCMC_5916.out")|> as.data.frame()
+Mousejob4 <- fread("outputs/EBMouseMCMC_6734.out")|> as.data.frame()
+Mouse_x <- mcmc_array(data = list(Mousejob1, Mousejob2, Mousejob3, Mousejob4))
+str <- ceiling(nrow(Mouse_x)/2) + 1
+end <- nrow(Mouse_x)
+j <- c(str:end) # discard burn-in
+sample_x <- seq(100001, 200000, 10)
+Mouse_x2 <- Mouse_x[sample_x,,]
+pars_Pop <- c("M_lnPBC(1)",	"M_lnPFatC(1)",	"M_lnPLivC(1)",	"M_lnPRptC(1)", "M_lnPSptC(1)", "M_lnPLungC(1)",	"M_lnVmaxC(1)",	"M_lnKMC(1)",	"M_lnVmax2C(1)",	"M_lnKM2C(1)",	"M_lnVmaxLungC(1)",	"M_lnKMLungC(1)",	"M_lnVmaxRptC(1)",	"M_lnKMRptC(1)")
+
+dp_Mouse <- bayesplot::mcmc_dens_overlay(Mouse_x2 [,,],  pars = pars_Pop,  facet_args = list(ncol= 3, nrow = 5))
+tp_Mouse <-bayesplot::mcmc_trace(Mouse_x2 [,,], pars = pars_Pop,  facet_args = list(ncol= 3, nrow = 5))
+ggplot2::ggsave(filename = "plots/suppl/Figure_S1_traceplot_Mouse.eps", 
+                plot = tp_Mouse, 
+                device = cairo_ps, 
+                dpi = 1200, 
+                width = 15,
+                height = 10, 
+                units = "cm") 
+ggplot2::ggsave(filename = "plots/suppl/Figure_S4_density_Mouse.eps", 
+                plot = dp_Mouse, 
+                device = cairo_ps, 
+                dpi = 1200, 
+                width = 15,
+                height = 10, 
+                units = "cm")
+```
+
+# Correlation matrix of population posterior EB-specific parameters 
+```{r}
+sim1.1 <- fread("outputs/EBMouseMCMC_3365.out") 
+sim2.1 <- fread("outputs/EBMouseMCMC_4880.out") 
+sim3.1 <- fread("outputs/EBMouseMCMC_5916.out") 
+sim4.1 <- fread("outputs/EBMouseMCMC_6734.out") 
+
+SIM1 <- do.call(rbind, list(sim1.1))
+SIM2 <- do.call(rbind, list(sim2.1))
+SIM3 <- do.call(rbind, list(sim3.1))
+SIM4 <- do.call(rbind, list(sim4.1))
+
+Mouse_corr <-mcmc_array(list(SIM1, SIM2, SIM3, SIM4))
+#dim(Mouse_corr)
+
+pars_name <- dimnames(Mouse_corr)[[3]]
+str <- which(pars_name == "M_lnVmaxC(1)")
+end <- which(pars_name == "M_lnKMRptC(1)")
+M_pars <- pars_name[str:end]
+sample_x <- seq(100001, 200000, 10)
+Parameter <- c(M_pars) %>%
+  strsplit(split =  "\\(1\\)") %>% unlist()
+# Correlation matrix
+sum_chains <- length(sample_x)*4
+
+Mouse_corr[sample_x,,M_pars] %>% matrix(nrow = sum_chains) %>%
+  `colnames<-`(Parameter[1:8]) %>%
+  ggcorr(nbreaks = 5, label = T, label_size = 4, label_round = 2, size = 4, label_alpha = TRUE) +
+  theme_minimal() + labs(title = "Mouse") + theme(plot.title = element_text(size=26, hjust = 0.5)) + theme(axis.title.x = element_blank(), axis.title.y = element_blank(), title = element_blank()) +   theme(plot.margin=grid::unit(c(0,0,0,0), "mm")) 
+ggsave("plots/suppl/Figure_S7_Correlation_matrix_Mouse.pdf", dpi = 1200, height = 10, width = 15, units="in")
+```
+
+```{r, include=FALSE}
+clear()
+```

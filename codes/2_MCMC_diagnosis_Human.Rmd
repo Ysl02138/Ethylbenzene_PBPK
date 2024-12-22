@@ -1,0 +1,158 @@
+# ---
+# title: "EB - Markov chain Monte Carlo CalibRation Diagnosis"
+# author: "Yu-Sheng Lin et al" 
+# date: "2023/02/05 (update: `r Sys.Date()`)"
+# output: 
+#  html_document:
+# fig_caption: yes  
+# ---
+# setting up file path
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd('..')
+wd <- getwd()
+knitr::opts_knit$set(root.dir =  wd)
+```
+
+# Prerequisites
+```{r, include=FALSE}
+source("MCSim/function.R")
+getwd()
+```
+
+# Import the R packages
+```{R message=FALSE, warning=FALSE}
+library(tidyverse, quietly=T)
+library(rstan, quietly=T)
+library(bayesplot, quietly=T)
+library(coda, quietly=T)
+library(corrplot, quietly=T)
+library(sensitivity, quietly=T)
+library(pksensi, quietly=T)
+library(data.table, quietly=T)
+library(GGally, quietly=T)
+library(ggplot2, quietly=T)
+library(ggcorrplot, quietly=T)
+theme_set(theme_bw())
+```
+
+#### MCMC diagnostic analysis ###
+```{r, eval=F}
+Humanjob1 <- fread("outputs/EBHumanMCMC_4880.out")|> as.data.frame()
+Humanjob2 <- fread("outputs/EBHumanMCMC_3365.out")|> as.data.frame()
+Humanjob3 <- fread("outputs/EBHumanMCMC_5916.out")|> as.data.frame()
+Humanjob4 <- fread("outputs/EBHumanMCMC_6734.out")|> as.data.frame()
+Human_x <- mcmc_array(data = list(Humanjob1, Humanjob2, Humanjob3, Humanjob4))
+```
+
+# Andrew Gelman Scale Reduction Factor
+# ## 
+# This section will produce results for posterior distributions for Supplemental Table S7 and S10 (output results from MCMC analysis)
+# ## 
+# From Supplemenal Table S7, one can use the equation in Supplemental Table S1 to calculate model parameters. Additional details are given in Supplemental Section 2.2 
+# ## 
+# For example,  PB (blood/air paritition coefficient) = PB0 × exp(lnPBC)  ----- this is can be seen in Supplemental Table S1 
+# where PB0 is the species-specific baseline point estimate (28 for human) and lnPBC is the scaling (sampled) parameter of PBC in the log scale. 
+# ##  
+# PBC = exp(lnPBC), 
+# Notethat at baseline (prior distribution, Table S4), lnPBC is assigned the baseline value of zero (0) prior to MCMC analysis (denoted as M_QLivC in 
+# the code and output).  
+# ##
+# Thus, baseline (prior distribution),                              PB (prior blood/air paritition coefficient) = 28 × exp(0) = 28 for male mice   
+# Upon completion of MCMC analysis (Supplemental Table S7),         PB (posterior blood/air paritition coefficient) = 28 × exp(-0.163) = 23.8 for male mice
+# ##  
+# For comparison, the prior vs posterior parameter distributions are shown in Table 3 (general physiological parameters) and Table 4 (EB-specific parameters)  
+# ##  
+# For Supplemental Table S10, residual error geometric standard deviation was calculated as exponential form of the square root of the error term 
+# (e.g., “Ve_CV” for EB in blood) 
+```{r}
+Humanmonitor <-monitor(Human_x, digits=4, probs = c(0.025, 0.5, 0.975), warmup = floor(dim(Human_x)[1]/2))
+print(Humanmonitor)
+```
+
+# Dalaijamts MPSRF
+# This section will produce MPSRF values for Supplemental Figure S3 traceplot
+```{r}
+HumanjobMPSRF1 = as.mcmc(fread("outputs/EBHumanMCMC_4880.out") |> as.data.frame(), header=T) 
+HumanjobMPSRF2 = as.mcmc(fread("outputs/EBHumanMCMC_3365.out") |> as.data.frame(), header=T) 
+HumanjobMPSRF3 = as.mcmc(fread("outputs/EBHumanMCMC_5916.out") |> as.data.frame(), header=T) 
+HumanjobMPSRF4 = as.mcmc(fread("outputs/EBHumanMCMC_6734.out") |> as.data.frame(), header=T) 
+
+x1Human <- HumanjobMPSRF1[,2:126 , drop=FALSE]
+x2Human <- HumanjobMPSRF2[,2:126 , drop=FALSE]
+x3Human <- HumanjobMPSRF3[,2:126 , drop=FALSE]
+x4Human <- HumanjobMPSRF4[,2:126 , drop=FALSE]
+
+combined_Human = mcmc.list(x1Human,x2Human,x3Human,x4Human) 
+gelman.diag(combined_Human, autoburnin=TRUE, multivariate=TRUE)
+```
+
+# traceplot and density diagnosis (every 10th sample from last half of MCMMC runs shown) #############
+# This section will produce Supplemental Figure S3 and S6 traceplot
+```{r, eval=F}
+Humanjob1 <- fread("outputs/EBHumanMCMC_4880.out")|> as.data.frame()
+Humanjob2 <- fread("outputs/EBHumanMCMC_3365.out")|> as.data.frame()
+Humanjob3 <- fread("outputs/EBHumanMCMC_5916.out")|> as.data.frame()
+Humanjob4 <- fread("outputs/EBHumanMCMC_6734.out")|> as.data.frame()
+Human_x <- mcmc_array(data = list(Humanjob1, Humanjob2, Humanjob3, Humanjob4))
+str <- ceiling(nrow(Human_x)/2) + 1
+end <- nrow(Human_x)
+j <- c(str:end) # discard burn-in
+sample_x <- seq(100001, 200000, 10)
+Human_x2 <- Human_x[sample_x,,]
+pars_Pop <- c( "M_lnPBC(1)" , "M_lnPFatC(1)" , "M_lnPLivC(1)" , "M_lnPRptC(1)" , "M_lnPSptC(1)" , "M_lnPLungC(1)" , "M_lnVmaxC(1)" , "M_lnKMC(1)" , "M_lnVmax2C(1)" , "M_lnKM2C(1)",	"M_lnVmaxLungC(1)",	"M_lnKMLungC(1)",	"M_lnFmeteC(1)",	"M_lnKmaC(1)",	"M_lnKpgaC(1)")
+
+dp_Human <- bayesplot::mcmc_dens_overlay(Human_x2 [,,],  pars = pars_Pop, facet_args = list(ncol= 3, nrow = 5))
+tp_Human <-bayesplot::mcmc_trace(Human_x2 [,,], pars = pars_Pop,  facet_args = list(ncol= 3, nrow = 5))
+ggplot2::ggsave(filename = "plots/suppl/Figure_S3_traceplot_Human.eps", 
+                plot = tp_Human, 
+                device = cairo_ps, 
+                dpi = 1200, 
+                width = 15,
+                height = 10, 
+                units = "cm")
+ggplot2::ggsave(filename = "plots/suppl/Figure_S6_density_Human.eps", 
+                plot = dp_Human, 
+                device = cairo_ps, 
+                dpi = 1200, 
+                width = 15,
+                height = 10, 
+                units = "cm")
+```
+
+# Correlation matrix of population posterior EB-specific parameters 
+# For Supplemental Figure S9
+```{r}
+sim1.1 <- fread("outputs/EBHumanMCMC_3365.out") 
+sim2.1 <- fread("outputs/EBHumanMCMC_4880.out") 
+sim3.1 <- fread("outputs/EBHumanMCMC_5916.out") 
+sim4.1 <- fread("outputs/EBHumanMCMC_6734.out") 
+
+SIM1 <- do.call(rbind, list(sim1.1))
+SIM2 <- do.call(rbind, list(sim2.1))
+SIM3 <- do.call(rbind, list(sim3.1))
+SIM4 <- do.call(rbind, list(sim4.1))
+
+Human_corr <-mcmc_array(list(SIM1, SIM2, SIM3, SIM4))
+#dim(Human_corr)
+
+pars_name <- dimnames(Human_corr)[[3]]
+str <- which(pars_name == "M_lnVmaxC(1)")
+end <- which(pars_name == "M_lnKpgaC(1)")
+M_pars <- pars_name[str:end]
+sample_x <- seq(100001, 200000, 10)
+Parameter <- c(M_pars) %>%
+  strsplit(split =  "\\(1\\)") %>% unlist()
+# Correlation matrix
+sum_chains <- length(sample_x)*4
+
+Human_corr[sample_x,,M_pars] %>% matrix(nrow = sum_chains) %>%
+  `colnames<-`(Parameter[1:9]) %>%
+  ggcorr(nbreaks = 5, label = T, label_size = 4, label_round = 2, size = 4, label_alpha = TRUE) +
+  theme_minimal() + labs(title = "Human") + theme(plot.title = element_text(size=26, hjust = 0.5)) + theme(axis.title.x = element_blank(), axis.title.y = element_blank(), title = element_blank()) +   theme(plot.margin=grid::unit(c(0,0,0,0), "mm")) 
+ggsave("plots/suppl/Figure_S9_Correlation_matrix_Human.pdf", dpi = 1200, height = 10, width = 15, units="in")
+```
+
+```{r, include=FALSE}
+clear()
+```
