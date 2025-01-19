@@ -113,6 +113,6 @@ ggplot(x_total, aes(x = parameter, y = index, fill=order)) +
   ggtitle("Mouse") +
   scale_fill_viridis(discrete = TRUE, direction = -1, end = 0.8) + 
   set_theme
-ggsave(file = "plots/Figure_6A_Mouse EB GSA.jpg", height = 12, width = 20, dpi = 600)
+ggsave(file = "plots/suppl/Supplemental_Figure_S10_Mouse EB GSA.jpg", height = 12, width = 20, dpi = 600)
 
 dev.off()  
