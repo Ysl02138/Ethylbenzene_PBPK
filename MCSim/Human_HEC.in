@@ -3,7 +3,7 @@
 # HEC simulation
 #
 # This file contains simulation descriptions from 1 theoretical
-# experiment exposing mice to a 75 ppm over a simulation of 2 weeks.  
+# experiment exposing humans to a 7.5 ppm over a simulation of 2 weeks.  
 # Copyright (c) 1993-2017 Free Software Foundation, Inc.
 #------------------------------------------------------------------------------
 
@@ -126,11 +126,11 @@ Simulation { # 1:
   ExpoInduc = 1.0;
   
 
-  expoday = PerDose (75, 24, 0, 24);  # PerDose(exposure event, initial time, exposure duration);
+  expoday = PerDose (75, 336, 0, 336);  # PerDose(exposure event, initial time, exposure duration);
   expowk  = 1;  # faction of days/week has exposure  (e.g., out of 7 days in a week, the number of days within the week had exposure) 
   expodur = 1;  # faction of study duration has exposure  (e.g., out of study week(s), the number of weeks had exposure) 
 
-  Print (AUCArt, AUCR, DailyAMetLiverVol, DailyAMetTotalBW34, 336);
+  Print (Cart, CRpt, DailyAMetLiverVol, DailyAMetTotalBW34, 336);
 }
 
 END.

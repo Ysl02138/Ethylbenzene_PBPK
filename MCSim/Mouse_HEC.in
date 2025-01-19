@@ -113,7 +113,7 @@ SetPoints ("Mouse.HEC.out", "Mouse.HEC.dat", 0,
   
 #---------------------------------------------------------
 # The next Simulation is run to predict AUC
-# at 75 ppm for 2 weeks .
+# at 75 ppm for 6 h/d, 5 d/w, for 2 weeks .
 #---------------------------------------------------------
 
 Simulation { # 1:

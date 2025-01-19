@@ -125,8 +125,8 @@ Simulation {###
       expowk = PerDose (1.0, 168,  0, 4);  # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
       expodur = PerDose (1.0, 384, 0, 4);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
 
-      Print (CV, 2.022 , 3.027 , 4.018 , 4.043 , 4.086 , 4.129 , 4.168 , 4.204);
-      Data  (CV, 0.606 , 0.623 , 0.711 , 0.566 , 0.283 , 0.156 , 0.128 , 0.088);
+      Print (CV, 2.022 , 3.027 , 4, 4.018 , 4.043 , 4.086 , 4.129 , 4.168 , 4.204);
+      Data  (CV, 0.606 , 0.623 , -1, 0.711 , 0.566 , 0.283 , 0.156 , 0.128 , 0.088);
       
 
     }    #end of Simulation  Experiment  (75 ppm - 4 hr, male) 
@@ -146,8 +146,8 @@ Simulation {
       expowk = PerDose (1.0, 168,  0, 4);  # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
       expodur = PerDose (1.0, 384, 0, 4);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
       
-      Print(CV, 2.022 , 3.032 , 4.026 , 4.176 , 4.348 , 4.663 , 4.999);  
-      Data (CV, 2.191 , 2.281 , 2.148 , 0.672 , 0.283 , 0.186 , 0.128);  
+      Print(CV, 2.022 , 3.032 , 4, 4.026 , 4.176 , 4.348 , 4.663 , 4.999);  
+      Data (CV, 2.191 , 2.281 , -1, 2.148 , 0.672 , 0.283 , 0.186 , 0.128);  
 
     }   #end of Simulation  Experiment  (200 ppm - 4 hr, male) 
     
@@ -165,8 +165,8 @@ Simulation {
       expowk  = PerDose (1.0, 168,  0, 4); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
       expodur = PerDose (1.0, 384, 0, 4);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
       
-      Print(CV, 2.021, 3.021, 4.035, 4.33, 4.66, 5.015, 5.506); 
-      Data (CV,15.993, 19.767, 10.431, 2.913, 0.587, 1.014, 0.149);   
+      Print(CV, 2.021, 3.021, 4, 4.035, 4.33, 4.66, 5.015, 5.506); 
+      Data (CV,15.993, 19.767, -1, 10.431, 2.913, 0.587, 1.014, 0.149);   
 
     }   #end of Simulation  Experiment  (500 ppm - 4 hr, male) 
     
@@ -185,8 +185,8 @@ Simulation {
       expowk  = PerDose (1.0, 168,  0, 4); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
       expodur = PerDose (1.0, 384, 0, 4);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
       
-      Print(CV, 2.02, 3.02, 4.03, 4.5, 5, 5.5, 6);  
-      Data (CV, 61.689, 75.813, 66.705, 41.15, 28.356, 22.328, 13.742); 
+      Print(CV, 2.02, 3.02, 4, 4.03, 4.5, 5, 5.5, 6);  
+      Data (CV, 61.689, 75.813, -1, 66.705, 41.15, 28.356, 22.328, 13.742); 
       
     }   #end of Simulation  Experiment  (1000 ppm - 4 hr, male) 
     
@@ -204,8 +204,8 @@ Simulation {
       expowk  =PerDose (1.0, 168,  0, 6); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
       expodur =PerDose (1.0, 384, 0, 6);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
       
-      Print(CV, 3, 5, 6.04, 6.08, 6.13, 6.2);   
-      Data (CV,0.553, 0.419, 0.364, 0.137, 0.071, 0.036); 
+      Print(CV, 3, 5, 6, 6.04, 6.08, 6.13, 6.2);   
+      Data (CV,0.553, 0.419, -1, 0.364, 0.137, 0.071, 0.036); 
       
     }   #end of ###  Experiment --     75 ppm - 6 hr, male, Figure 3
     
@@ -242,8 +242,8 @@ Simulation {
       expowk  =PerDose (1.0, 168,  0, 6); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
       expodur =PerDose (1.0, 384, 0, 6);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
       
-      Print(CV, 3, 5, 6.04, 6.08, 6.13, 6.2);    
-      Data (CV,0.57, 0.72, 0.54, 0.26, 0.12, 0.06); 
+      Print(CV, 3, 5, 6. 6.04, 6.08, 6.13, 6.2);    
+      Data (CV,0.57, 0.72, -1, 0.54, 0.26, 0.12, 0.06); 
       
     }   #end of ###  Experiment -- 75 ppm - 6 hr, female,  over 7 days and only last day data reported
     
