@@ -35,7 +35,7 @@ The output of this R code script provides the results of post-MCMC diagnosis tes
 The output of this R code script provides the results of model fitting to validation data (Figure 5A, 5B and 5C for mouse, rat and human, respectively). 
 
 4_gsa_Human.R (Step 4):  
-The output of this R code script provides the results of parameter sensitivity analysis for EB-specific parameters (Figure 6A, 6B and 6C for mouse, rat and human, respectively).
+The output of this R code script provides the results of parameter sensitivity analysis for EB-specific parameters (Supplemental Figure S10, S11, and S12for mouse, rat and human, respectively).
 
 5_HEC_Mouse_MAP.R and 5_HEC_Rat_MAP.R (Step 5):
 The output of these two R code scripts (called “Mouse_HEC.csv” and “Rat_HEC.csv”, saved in the “outputs” folder) provide the results of estimated human equivalent concentration (HEC) based on mouse and rat models, respectively (Table 5). 
