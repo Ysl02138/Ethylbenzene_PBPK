@@ -15,7 +15,7 @@ The readers can also re-run the MCMC analysis using the files provided in the fo
 ================= Folder contents =============
 
 **codes**: 
-As mentioned above, the R source codes in this folder were organized by species (e.g., human, etc) in a stepwise fashion. As such, the readers can easily duplicate the current work. Using humans as an example:
+As mentioned above, the R source codes in this folder are organized by species (e.g., human, etc) in a stepwise fashion. As such, the readers can easily duplicate the current work. Using humans as an example:
 
 “1_calibration_Human.R” (Step 1):  
 The output of this R code script provides the results of model fitting to human calibration data (Figure 4C). 
