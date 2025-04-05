@@ -1,0 +1,479 @@
+# ------------------------------------------
+# Mouse MCMC
+# cd ./mcsim-6.2.0/IRIS_EB/modeling/MCMC/MouseHier
+
+Integrate (Lsodes, 1e-6, 1e-6, 1);
+
+MCMC ("MCMC.default.out","",  # name of output and restart file
+  "",         # name of data file
+  200000,0,   # iterations, print predictions flag,
+  1, 200000, # printing frequency, iters to print
+  4880);  # random seed (default)
+
+Level { #Population level
+
+  Distrib( Ve_CV     ,           LogUniform , 0.01 , 3.3 );    
+  Distrib( Ve_CFat ,             LogUniform , 0.01 , 3.3 );
+  Distrib( Ve_CLung ,            LogUniform , 0.01 , 3.3 );
+  Distrib( Ve_CLiv ,             LogUniform , 0.01 , 3.3 ); 
+    
+    
+    Likelihood (CV,                 LogNormal_v, Prediction(CV),          Ve_CV); 
+    Likelihood (CFat,               LogNormal_v, Prediction(CFat),        Ve_CFat); 
+    Likelihood (CLung,              LogNormal_v, Prediction(CLung),       Ve_CLung);     
+    Likelihood (CLiv,               LogNormal_v, Prediction(CLiv),        Ve_CLiv); 
+
+    ###### POPULATION MEANS
+    
+    
+    # Distrib ( M_QCC     , TruncNormal,    1.0 , 0.375, 0.25, 1.75);
+    # Distrib ( M_QPC     , TruncNormal,    1.0 , 0.375, 0.25, 1.75);
+
+    # Distrib ( M_QFatC     , TruncNormal,    1.0 , 0.375, 0.25, 1.75);
+    # Distrib ( M_QLivC     , TruncNormal,    1.0 , 0.15, 0.7, 1.3);
+    # Distrib ( M_QSptC     , TruncNormal,    1.0 , 0.15, 0.7, 1.3);
+
+    # Distrib (M_VFatC     , TruncNormal,    1.0 , 0.375, 0.25, 1.75);
+    # Distrib (M_VLivC     , TruncNormal,	   1.0 , 0.15, 0.7, 1.3);
+    # Distrib (M_VRptC     , TruncNormal,    1.0 , 0.15, 0.7, 1.3);
+    # Distrib (M_VLungC    , TruncNormal,	   1.0 , 0.15, 0.7, 1.3);
+
+    Distrib  (M_lnPBC       , TruncNormal,    0, 0.6, -1.8, 1.8);
+    Distrib  (M_lnPFatC     , TruncNormal,    0, 0.6, -1.8, 1.8); 
+    Distrib  (M_lnPLivC     , TruncNormal,    0, 0.6, -1.8, 1.8);
+    Distrib  (M_lnPRptC     , TruncNormal,    0, 0.6, -1.8, 1.8);
+    Distrib  (M_lnPSptC     , TruncNormal,    0, 0.6, -1.8, 1.8);
+    Distrib  (M_lnPLungC    , TruncNormal,    0, 0.6, -1.8, 1.8); 
+    
+    Distrib  (M_lnVmaxC     , TruncNormal,    0, 0.6, -1.8, 1.8);
+    Distrib  (M_lnKMC       , TruncNormal,    0, 0.6, -1.8, 1.8);
+    
+    Distrib  (M_lnVmax2C    , Uniform , -2.4, 2.4);
+    Distrib  (M_lnKM2C      , Uniform , -2.4, 2.4);
+    
+    Distrib  (M_lnVmaxLungC     , TruncNormal,    0, 0.6, -1.8, 1.8);
+    Distrib  (M_lnKMLungC       , TruncNormal,    0, 0.6, -1.8, 1.8);
+    
+    Distrib  (M_lnVmaxRptC      , TruncNormal,    0, 0.6, -1.8, 1.8);
+    Distrib  (M_lnKMRptC        , TruncNormal,    0, 0.6, -1.8, 1.8);
+    
+     ###### POPULATION VARIANCES
+   
+    # Distrib   ( V_QCC     , HalfNormal, 0.3);
+    # Distrib   ( V_QPC     , HalfNormal, 0.3);
+
+    # Distrib   ( V_QFatC     , HalfNormal, 0.3);
+    # Distrib   ( V_QLivC     , HalfNormal, 0.3);
+    # Distrib   ( V_QSptC     , HalfNormal, 0.3);
+    
+    # Distrib   ( V_VFatC      , HalfNormal, 0.3);
+    # Distrib   ( V_VLivC      , HalfNormal, 0.3);
+    # Distrib   ( V_VRptC      , HalfNormal, 0.3);
+    # Distrib   ( V_VLungC     , HalfNormal, 0.3);
+
+    Distrib ( V_lnPBC	        , HalfNormal, 0.3);
+    Distrib ( V_lnPFatC	      , HalfNormal, 0.3);
+    Distrib ( V_lnPLivC	      , HalfNormal, 0.3);
+    Distrib ( V_lnPRptC       , HalfNormal, 0.3 );
+    Distrib ( V_lnPSptC	      , HalfNormal, 0.3 );
+    Distrib ( V_lnPLungC      , HalfNormal, 0.3); 
+    
+    Distrib ( V_lnVmaxC       ,  HalfNormal, 0.3);
+    Distrib ( V_lnKMC	        ,  HalfNormal, 0.3);
+    Distrib ( V_lnVmax2C      ,  HalfNormal, 0.3);
+    Distrib ( V_lnKM2C        ,  HalfNormal, 0.3);
+    Distrib ( V_lnVmaxLungC	  ,  HalfNormal, 0.3);
+    Distrib ( V_lnKMLungC     ,  HalfNormal, 0.3);
+    Distrib ( V_lnVmaxRptC	  ,  HalfNormal, 0.3);
+    Distrib ( V_lnKMRptC      ,  HalfNormal, 0.3);
+
+ 
+ Level { #Study level
+      
+   # Distrib( QCC     , TruncNormal_v,  M_QCC   , V_QCC  ,  0.2, 1.8);
+   # Distrib( QPC     , TruncNormal_v,  M_QPC   , V_QPC  ,  0.2, 1.8);
+
+   # Distrib( QFatC     , TruncNormal_v,  M_QFatC     , V_QFatC   ,  0.2, 1.8);
+   # Distrib( QLivC     , TruncNormal_v,  M_QLivC     , V_QLivC   ,  0.7, 1.3);
+   # Distrib( QSptC     , TruncNormal_v,  M_QSptC     , V_QSptC   ,  0.7, 1.3);
+
+   # Distrib ( VFatC     , TruncNormal_v,  M_VFatC     , V_VFatC      ,  0.2, 1.8);
+   # Distrib ( VLivC  	  , TruncNormal_v,  M_VLivC  	  , V_VLivC     ,  0.7, 1.3);
+   # Distrib ( VRptC     , TruncNormal_v,  M_VRptC     , V_VRptC      ,  0.7, 1.3);
+   # Distrib ( VLungC    , TruncNormal_v,  M_VLungC    , V_VLungC     ,  0.7, 1.3);
+
+   Distrib(	lnPBC,	    TruncNormal_v,	M_lnPBC	    , V_lnPBC,	     -1.8, 1.8);
+   Distrib(	lnPFatC,	  TruncNormal_v,	M_lnPFatC	  , V_lnPFatC,	   -1.8, 1.8);
+   Distrib(	lnPLivC,	  TruncNormal_v,	M_lnPLivC  	, V_lnPLivC,	   -1.8, 1.8);
+   Distrib(	lnPRptC,	  TruncNormal_v,	M_lnPRptC	  , V_lnPRptC,	   -1.8, 1.8);
+   Distrib(	lnPSptC,	  TruncNormal_v,	M_lnPSptC	  , V_lnPSptC,	   -1.8, 1.8);
+   Distrib(	lnPLungC,	  TruncNormal_v,	M_lnPLungC	, V_lnPLungC,	   -1.8, 1.8);							
+   
+   Distrib(	lnVmaxC,	    TruncNormal_v, 	M_lnVmaxC	    , V_lnVmaxC,	     -1.8, 1.8	);
+   Distrib(	lnKMC,	      TruncNormal_v,	M_lnKMC	      , V_lnKMC,   	     -1.8, 1.8	);
+   
+   Distrib(	lnVmax2C,	    TruncNormal_v, 	M_lnVmax2C	  , V_lnVmax2C,	     -2.4, 2.4  );
+   Distrib(	lnKM2C,	      TruncNormal_v, 	M_lnKM2C	    , V_lnKM2C,	       -2.4, 2.4	);
+   
+   Distrib(	lnVmaxLungC,	TruncNormal_v, 	M_lnVmaxLungC	, V_lnVmaxLungC,	  -1.8, 1.8	);
+   Distrib(	lnKMLungC,	  TruncNormal_v, 	M_lnKMLungC	  , V_lnKMLungC,	    -1.8, 1.8	);
+   
+   Distrib  (lnVmaxRptC,	TruncNormal_v, 	M_lnVmaxRptC , V_lnVmaxRptC,	 -1.8, 1.8);
+   Distrib  (lnKMRptC,    TruncNormal_v, 	M_lnKMRptC	 , V_lnKMRptC,	   -1.8, 1.8);
+
+
+ ############### DATA USED IN CALIBRATION #############
+
+Level { ### Same datasets (Fuciarelli, 2000, and Charest-Tardif, 2006) used by Nong 2007 for PBPK modeling
+
+  Experiment { 
+ 
+  # 75 ppm - 4 hr, female, Charest-Tardif, 2006  (used by Fig 2 Nong 2007)
+
+  BWmeas = 0.0205;
+  Species =3 ; 
+  Sex = 2;
+  ExpoInduc = 1;
+  
+  expoday = PerDose (75, 24, 0, 4);    
+  expowk  = PerDose (1.0, 168,  0, 4); 
+  expodur = PerDose (1.0, 384, 0, 4);  
+  
+  Print(CV, 2.02 , 3.03 , 4.03 , 4.05 , 4.089 , 4.133 , 4.167 , 4.206);    
+  Data (CV,0.53 , 0.417 , 0.454 , 0.253 , 0.17 , 0.076 , 0.089 , 0.042); 
+
+
+        # Print(CV , 0);
+        # Data (CV , -1);
+        Print(Cart , 0);
+        Data (Cart , -1);
+        Print(CFat , 0);
+        Data (CFat , -1);
+        Print(CLung , 0);
+        Data (CLung , -1);
+        Print(CLiv    , 0);
+        Data (CLiv    , -1);
+
+ }    #end of Simulation of 75 ppm - 4 hr
+
+
+  Experiment {  # 200 ppm - 4 hr, female, Charest-Tardif, 2006  (used by Fig 2 Nong 2007)
+  
+  BWmeas = 0.0205;
+  Species =3 ; 
+  Sex = 2;
+  ExpoInduc = 1;
+  
+  expoday = PerDose (200, 24, 0, 4);    
+  expowk  = PerDose (1.0, 168,  0, 4); 
+  expodur = PerDose (1.0, 384, 0, 4);  
+
+  Print(CV,2.03 , 3.03 , 4.03 , 4.17 , 4.34 , 4.68 , 5);   
+  Data (CV,2.257 , 2.081 , 2.15 , 0.514 , 0.218 , 0.087 , 0.03); 
+
+        # Print(CV , 0);
+        # Data (CV , -1);
+        Print(Cart , 0);
+        Data (Cart , -1);
+        Print(CFat , 0);
+        Data (CFat , -1);
+        Print(CLung , 0);
+        Data (CLung , -1);
+        Print(CLiv    , 0);
+        Data (CLiv    , -1);
+
+ }    #end of Simulation of 200 ppm - 4 hr
+
+
+
+  Experiment {  # 500 ppm - 4 hr, female, Charest-Tardif, 2006  (used by Fig 2 Nong 2007)
+  
+  BWmeas = 0.0205;
+  Species =3 ; 
+  Sex = 2;
+  ExpoInduc = 1;
+    
+  expoday = PerDose (500, 24, 0, 4);    
+  expowk  = PerDose (1.0, 168,  0, 4); 
+  expodur = PerDose (1.0, 384, 0, 4);  
+  
+  Print(CV, 2.02 , 3.02 , 4.02 , 4.33 , 4.67 , 5.02 , 5.5); 
+  Data (CV,15.967 , 19.167 , 15.921 , 6.664 , 4.315 , 6.45 , 0.699);  
+
+
+        # Print(CV , 0);
+        # Data (CV , -1);
+        Print(Cart , 0);
+        Data (Cart , -1);
+        Print(CFat , 0);
+        Data (CFat , -1);
+        Print(CLung , 0);
+        Data (CLung , -1);
+        Print(CLiv    , 0);
+        Data (CLiv    , -1);
+
+
+ }    #end of Simulation of 500 ppm - 4 hr
+
+
+  Experiment {  # 1000 ppm - 4 hr, female, Charest-Tardif, 2006  (used by Fig 2 Nong 2007)
+  
+  BWmeas = 0.0205;
+  Species =3 ; 
+  Sex = 2;
+  ExpoInduc = 1;
+
+  expoday = PerDose (1000, 24, 0, 4);    
+  expowk  = PerDose (1.0, 168,  0, 4); 
+  expodur = PerDose (1.0, 384, 0, 4);  
+ 
+  Print(CV, 2.019 , 3.025 , 4.023 , 4.495 , 4.998 , 5.497 , 6.009);  
+  Data (CV,71.107 , 78.342 , 82.365 , 57.508 , 40.548 , 35.475 , 21.549); 
+
+
+        # Print(CV , 0);
+        # Data (CV , -1);
+        Print(Cart , 0);
+        Data (Cart , -1);
+        Print(CFat , 0);
+        Data (CFat , -1);
+        Print(CLung , 0);
+        Data (CLung , -1);
+        Print(CLiv    , 0);
+        Data (CLiv    , -1);
+
+
+ }    #end of Simulation of 1000 ppm - 4 hr
+
+
+
+ Experiment {  # 75 ppm - 6 hr, female, Charest-Tardif, 2006  (used by Fig 3 Nong 2007)
+  
+  BWmeas = 0.0205;
+  Species =3 ; 
+  Sex = 2;
+  ExpoInduc = 1;
+   
+  expoday =PerDose (75, 24, 0, 6);    
+  expowk  =PerDose (1.0, 168,  0, 6); 
+  expodur =PerDose (1.0, 384, 0, 6);  
+  
+  Print(CV, 3 , 5 , 6.03 , 6.07 , 6.14 , 6.21);      
+  Data (CV,0.547 , 0.547 , 0.248 , 0.133 , 0.045 , 0.024); 
+   
+
+        # Print(CV , 0);
+        # Data (CV , -1);
+        Print(Cart , 0);
+        Data (Cart , -1);
+        Print(CFat , 0);
+        Data (CFat , -1);
+        Print(CLung , 0);
+        Data (CLung , -1);
+        Print(CLiv    , 0);
+        Data (CLiv    , -1);
+
+ }   #end of 75 ppm - 6 hr
+ 
+ 
+ Experiment {    # 750 ppm - 6 hr, female, Charest-Tardif, 2006 used by Nong 2007  (used by Fig 3 Nong 2007)
+  
+  BWmeas = 0.0205;
+  Species =3 ; 
+  Sex = 2;
+  ExpoInduc = 1;
+  
+  expoday =PerDose (750, 24, 0, 6);    
+  expowk  =PerDose (1.0, 168,  0, 6); 
+  expodur =PerDose (1.0, 384, 0, 6);  
+  
+  Print(CV,3 , 5 , 6 , 6.667 , 7.333 , 8);  
+  Data (CV,42.643 , 44.997 , 53.944 , 18.074 , 12.05 , 6.975); 
+  
+
+        # Print(CV , 0);
+        # Data (CV , -1);
+        Print(Cart , 0);
+        Data (Cart , -1);
+        Print(CFat , 0);
+        Data (CFat , -1);
+        Print(CLung , 0);
+        Data (CLung , -1);
+        Print(CLiv    , 0);
+        Data (CLiv    , -1);
+
+
+ }   #end of 750 ppm - 6 hr,   (used by Fig 3 Nong 2007)
+ 
+
+ Experiment { # male, 75 ppm for 6 h/d over 7 days but data only shown in last day. 
+              # Charest-Tardif, 2006 (used by Fig 4 Nong 2007)
+  
+  BWmeas = 0.0225;
+  Species =3 ; 
+  Sex = 1;
+  ExpoInduc = 1;
+ 
+  expoday = PerDose (75, 24, 0, 6);    
+  expowk  = PerDose (1.0, 168,  0, 6); 
+  expodur = PerDose (1.0, 384, 0, 6);  
+
+  Print(CV, 3	5 , 6.04 , 6.08 , 6.13 , 6.2);    
+  Data (CV,0.61 , 0.79 , 0.46 , 0.16 , 0.07 , 0.07); 
+   
+
+        # Print(CV , 0);
+        # Data (CV , -1);
+        Print(Cart , 0);
+        Data (Cart , -1);
+        Print(CFat , 0);
+        Data (CFat , -1);
+        Print(CLung , 0);
+        Data (CLung , -1);
+        Print(CLiv    , 0);
+        Data (CLiv    , -1);
+
+
+ }   #end of ###  Experiment 7 -- 75 ppm - 6 hr 
+ 
+ 
+
+ Experiment { # male, 750 ppm for 6 h/d over 7 days but data only shown in last day. 
+              # Charest-Tardif, 2006 (used by Fig 4 Nong 2007)
+  
+  BWmeas = 0.0225;
+  Species =3 ; 
+  Sex = 1;
+  ExpoInduc = 3;
+  
+  expoday = PerDose (750, 24, 0, 6);    
+  expowk  = PerDose (1.0, 168,  0, 6); 
+  expodur =PerDose (1.0, 168, 0, 6);  
+  
+  Print(CV, 3 , 5 , 6 , 6.67 , 7.34 , 8);    
+  Data (CV,41.25 , 41.26 , 30.27 , 6.41 , 0.4 , 0.14); 
+  
+
+        # Print(CV , 0);
+        # Data (CV , -1);
+        Print(Cart , 0);
+        Data (Cart , -1);
+        Print(CFat , 0);
+        Data (CFat , -1);
+        Print(CLung , 0);
+        Data (CLung , -1);
+        Print(CLiv    , 0);
+        Data (CLiv    , -1);
+
+
+   }   #end of 750 ppm - 6 hr,  over 7 days
+ 
+ } # end of Tardif 2006
+ 
+ 
+Level { # Fuciarelli 2000
+
+Experiment {    # 75 ppm - 6 hr, female,  original data from Fuciarelli 2000. Note Nong 2007 did not use Mouse data at 75 ppm
+  
+  BWmeas = 0.0215;
+  Species =3 ; 
+  Sex = 2;
+  ExpoInduc = 1;
+  
+  expoday = PerDose (75, 24, 0, 6);    
+  expowk  = PerDose (1.0, 168,  0, 6); 
+  expodur = PerDose (1.0, 384, 0, 6);  
+  
+  # ==============================================================================================================================
+
+  
+  # individual data
+  
+  Print (CV, 6.301 , 6.302 , 6.303 , 6.368 , 6.369 , 6.403 , 6.451 , 6.469 , 6.486 , 6.534 , 6.552 , 6.57 , 6.734 , 6.735 , 6.753 , 6.884 , 6.885 , 6.886 , 7.068 , 7.069 , 7.07 , 7.384 , 7.701 , 7.986);
+  
+  Data (CV, 0.0369 , 0.0312 , 0.0284 , 0.00904 , 0.00848 , 0.0239 , 0.0334 , 0.0102 , 0.00622 , 0.00696 , 0.0104 , 0.00947 , 0.00254 , 0.00244 , 0.00341 , 0.0019 , 0.00175 , 0.00171 , 0.00298 , 0.0016 , 0.0016 , 0.00166 , 0.00206 , 0.00149); 
+
+  # ==============================================================================================================================
+
+  # individual data
+  Print (CFat, 6.301 , 6.302 , 6.368 , 6.369 , 6.403 , 6.451 , 6.469 , 6.486 , 6.534 , 6.552 , 6.57 , 6.734 , 6.753 , 7.068 , 7.701);
+  
+  Data (CFat, 9.44 , 1.49 , 1.49 , 0.551 , 0.0549 , 2.34 , 1.51 , 0.0931 , 1.93 , 1.23 , 1.85 , 0.62 , 0.374 , 0.447 , 0.216 );
+
+
+   # Print(CV , 0);
+   # Data (CV , -1);
+   Print(Cart , 0);
+   Data (Cart , -1);
+   # Print(CFat , 0);
+   # Data (CFat , -1);
+   Print(CLung , 0);
+   Data (CLung , -1);
+   Print(CLiv    , 0);
+   Data (CLiv    , -1);
+
+   }   #end of 6 hrs/day, 12 days , EB in venous blood, fat, liver and lung, only last day data reported, Fig 5 (male)  / Fig 6 (female)
+
+
+ Experiment {   # 750 ppm - 6 hr, male,  original data from Fuciarelli 2000 (used by Fig 5 Nong 2007)
+  
+  BWmeas = 0.0297;
+  Species =3 ; 
+  Sex = 1;
+  ExpoInduc = 3;
+  
+  expoday = PerDose (750, 24, 0, 6);    # PerDose (exposure event, initial time, exposure duration);
+  expowk  = PerDose (1.0, 168,  0, 6); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+  expodur = PerDose (1.0, 384, 0, 6);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+  
+  # ==============================================================================================================================
+  
+  # individual data
+  
+  Print (CV,   6.218 , 6.219 , 6.22 , 6.318 , 6.319 , 6.32 , 6.434 , 6.435 , 6.436 , 6.534 , 6.535 , 6.536 , 6.668 , 6.669 , 6.67 , 7.018 , 7.019 , 7.02 , 7.484 , 7.485 , 7.486 , 8.084 , 8.085 , 8.103 , 9.001 , 9.002 , 9.003 , 10.001 , 10.002 , 10.983 , 10.984 , 10.985 , 12.003 , 12.004 , 12.005 , 13.984 , 13.985 , 13.986 , 15.003 , 15.004);
+  
+  Data (CV, 4.9 , 4.32 , 4.24 , 4.25 , 2.82 , 2.35 , 2.44 , 2.08 , 1.74 , 2.34 , 2.14 , 1.87 , 2.17 , 1.88 , 1.74 , 1.32 , 0.895 , 0.378 , 1.41 , 0.185 , 0.125 , 0.237 , 0.169 , 0.116 , 0.146 , 0.146 , 0.0314 , 0.0397 , 0.0345 , 0.0323 , 0.0158 , 0.00649 , 0.0146 , 0.0135 , 0.0125 , 0.00524 , 0.00438 , 0.00382 , 0.0045 , 0.00222); 
+
+
+
+  # ==============================================================================================================================
+
+  # individual data
+  Print (CFat, 6.218 , 6.219 , 6.22 , 6.318 , 6.319 , 6.336 , 6.418 , 6.435 , 6.436 , 6.534 , 6.535 , 6.553 , 6.668 , 6.669 , 6.686 , 7.001 , 7.019 , 7.02 , 7.468 , 7.485 , 7.486 , 8.084 , 8.085 , 8.103 , 9.001 , 9.002 , 9.035 , 9.968 , 10.001 , 10.002 , 10.984 , 10.985 , 11.003 , 11.984 , 12.002 , 12.003 , 13.984 , 13.985 , 14.003 , 15.001 , 15.002 , 15.003);
+  
+  Data (CFat,  469 , 426 , 239 , 339 , 227 , 124 , 273 , 340 , 240 , 273 , 137 , 203 , 99.2 , 0.706 , 180 , 194 , 10.1 , 0.441 , 98.3 , 27.7 , 1.59 , 55.6 , 19 , 94.4 , 28.7 , 27 , 2.29 , 0.367 , 13.6 , 0.56 , 1.19 , 0.264 , 3.58 , 1.27 , 0.73 , 0.65 , 0.77 , 0.634 , 0.305 , 0.815 , 0.734 , 0.492);
+
+
+  # ==============================================================================================================================
+  
+  # individual data
+  Print (CLiv,  6.218 , 6.219 , 6.22 , 6.318 , 6.319 , 6.336 , 6.418 , 6.435 , 6.436 , 6.534 , 6.535 , 6.553 , 6.668 , 6.669 , 6.686 , 7.001 , 7.019 , 7.02 , 7.468 , 7.486 , 8.084 , 8.085 , 9.001 , 9.002);
+
+  Data (CLiv,  4.39 , 2.69 , 1.16 , 2.07 , 1.04 , 1.81 , 5.3 , 1.19 , 0.681 , 1.52 , 0.427 , 0.81 , 0.639 , 0.63 , 0.402 , 0.29 , 0.236 , 0.0376 , 0.0974 , 0.0568 , 0.0546 , 0.0196 , 0.0269 , 0.0182);
+
+  # ==============================================================================================================================
+  # individual data
+  Print (CLung, 6.218 , 6.219 , 6.22 , 6.318 , 6.319 , 6.336 , 6.418 , 6.435 , 6.436 , 6.534 , 6.535 , 6.553 , 6.668 , 6.669 , 6.686 , 7.003 , 7.485 , 7.486 , 8.084 , 8.103 , 9.001, 12.002);
+   
+  Data (CLung, 13.2 , 2.46 , 1.66 , 2.9 , 0.21 , 4.33 , 0.832 , 2.48 , 0.595 , 8.04 , 0.286 , 0.287 , 1.52 , 0.0588 , 0.711 , 0.076 , 0.021 , 0.0422 , 0.13 , 0.0874 , 0.109, 0.0456);
+
+        # Print(CV , 0);
+        # Data (CV , -1);
+        Print(Cart , 0);
+        Data (Cart , -1);
+        # Print(CFat , 0);
+        # Data (CFat , -1);
+        # Print(CLung , 0);
+        # Data (CLung , -1);
+        # Print(CLiv    , 0);
+        # Data (CLiv    , -1);
+ 
+   }   #end of 6 hrs/day, 12 days	EB in venous blood, fat, liver and lung, only last day data reported
+   
+   } # end of Fuciarelli study
+
+ } # end of study level
+  
+} # Population level
+
+End. 
