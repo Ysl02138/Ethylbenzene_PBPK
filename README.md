@@ -4,10 +4,10 @@ README Supplementary material for the current work (Ethylbenzene PBPK model)
 =========================================
 
 Overview:  
-The supplementary data include R code (in the folder of **codes**) and datasets (the folder of **datasets**) that can reproduce the modeling and analyze results (in the folder of **outputs**) and visualize plots (in the **plots** folder).  Also, the readers can re-run the whole MCMC analysis (optional) as detailed below.
+The supplementary data include R code (in the folder of **codes**) and datasets (the folder of **datasets**) that can reproduce the modeling and analysis results (in the folder of **outputs**) and visualize plots (in the **plots** folder).  Also, the readers can re-run the whole MCMC analysis (optional) as detailed below.
 
 Quick Start:  
-The readers can directly duplicate the current results in a timely manner using the authors' generated MCMC outputs.  First, please execute the “EB.Rproj” file under the parent directory to set up the correct folder/file path.  Once completed, the readers can execute the files under the folder of **codes** in a stepwise fashion to duplicate the current work (e.g., “1_calibration_Human.R”,  “2_MCMC_diagnosis_Human.Rmd” and so on)  
+The readers can directly duplicate the current results in a timely manner using the authors' generated MCMC outputs.  First, please execute the “EB.Rproj” file under the parent directory to set up the correct folder/file path.  Once completed, the readers can execute the files under the folder of **codes** in a stepwise fashion to duplicate the current work (e.g., “1_calibration_Human.R”,  “2_MCMC_diagnosis_Human.Rmd”, and so on)  
 
 **MCMC replication analysis (optional – please see the instructions on the last page for details):  
 The readers can also re-run the MCMC analysis using the files provided in **MCMC replication analysis** as an alternative option. The resultant outputs of MCMC sampling are expected to be the same as those offered by the authors.   
@@ -22,41 +22,44 @@ The output of this R code script provides the results of model fitting to human 
 
 2_MCMC_diagnosis_Human.RMD (Step 2):  
 The output of this R code script provides the results of post-MCMC diagnosis tests, including: 
-(a) Posterior distribution of population scaling parameters (Supplemental Table S5, S6, and S7 for mouse, rat, and human, respectively). By using the scaling relationship (Supplemental Table S1) and the PBPK model parameters were updated (Table 3 and 4) using these updated "scaling parameters".  Further details are provided in Supplemental Material Section 2.2.
-(b) Posterior distributions for model residual errors (Supplemental Table S8, S9, and S10 for mouse, rat, and human, respectively).
 
-(c) Traces plot of EB-specific population parameters, including the estimated value of Brooks-Gelman Multivariate Shrink Factors (MPSRF) (Supplemental Figure S1, S2, and S3 for mouse, rat, and human, respectively).
+(a) Posterior distribution of population scaling parameters (Supplemental Tables S5, S6, and S7 for mouse, rat, and human, respectively). By using the scaling relationship (Supplemental Table S1), the PBPK model parameters were updated (Tables 3 and 4) using these updated "scaling parameters".  Further details are provided in Supplemental Material Section 2.2.
 
-(d) Probability density function plots of EB-specific population parameters (Figure S4, S5, and S6 for mouse, rat, and human, respectively).
+(b) Posterior distributions for model residual errors (Supplemental Tables S9, S10, and S11 for mouse, rat, and human, respectively).
 
-(e) Correlation matrix of population metabolism-related parameters for humans (Figure S7, S8, and S9 for mouse, rat, and human, respectively).
+(c) Traces plot of EB-specific population parameters, including the estimated value of Brooks-Gelman Multivariate Shrink Factors (MPSRF) (Supplemental Figures S1, S2, and S3 for mouse, rat, and human, respectively).
+
+(d) Probability density function plots of EB-specific population parameters (Supplemental Figures S4, S5, and S6 for mouse, rat, and human, respectively).
+
+(e) Correlation matrix of population metabolism-related parameters for humans (Supplemental Figures S7, S8, and S9 for mouse, rat, and human, respectively).
 
 3_validation_MAP_Human3.R (Step 3):  
-The output of this R code script provides the results of model fitting to validation data (Figure 5A, 5B, and 5C for mouse, rat, and human, respectively). 
+The output of this R code script provides the results of model fitting to validation data (Figures 5A, 5B, and 5C for mouse, rat, and human, respectively). 
 
 4_gsa_Human.R (Step 4):  
-The output of this R code script provides the results of parameter sensitivity analysis for EB-specific parameters (Figure 6A, 6B, and 6C for mice, rats, and humans, respectively).
+The output of this R code script provides the results of parameter sensitivity analysis for EB-specific parameters (Supplemental Figures S10, S11, and S12 for mouse, rat, and human, respectively).
 
 5_HEC_Mouse_MAP.R and 5_HEC_Rat_MAP.R (Step 5):
-The output of these two R code scripts (called “Mouse_HEC.csv” and “Rat_HEC.csv”, saved in the “outputs” folder) provide the results of estimated human equivalent concentration (HEC) based on mouse and rat models, respectively (Table 5). 
+The output of these two R code scripts (called “Mouse_HEC.csv” and “Rat_HEC.csv”, saved in the “outputs” folder) provides the results of estimated human equivalent concentration (HEC) based on mouse and rat models, respectively (Table 5). 
 
-**datasets**: The datasets provided original data used in the current analysis.  These datasets are the same as those embedded in the R source codes.  
-
+**datasets**: The datasets provided the original data used in the current analysis.  These datasets are the same as those embedded in the R source codes.  
 
 **MCSim**: The source files of GNU MCSim software and the related modeling and input files that can conduct model simulation and prediction.
 
 **outputs**: The files in the output folder are generated by the above R code and datasets.  
-The readers can replace these output files provided by the authors with the newly generated outputs by the readers themselves from re-running the MCMC analysis (e.g., “EBHumanMCMC_3365.out” for humans, one output file for each of 4 chains in each species like human).
+The readers can replace these output files provided by the authors with the newly generated outputs by the readers themselves from re-running the MCMC analysis (e.g., “EBHumanMCMC_3365.out” for humans, one output file for each of 4 chains in each species, like humans).
 
 **plots**: All plots in the manuscript were saved in this folder.
 
+**MCMC Replication Analysis (Optional – see instructions on the last page for details):
+In addition to using the provided model outputs, readers have the option to replicate the MCMC analyses by re-running the calibration. Two types of MCMC analyses are included:
 
-**MCMC replication analysis** (optional):
-!!!Note!!!  Again, the readers can skip this folder and can still duplicate the current work by using the outputs provided by the authors.  
+•	Main Analysis: Full MCMC calibration of both physiological and EB-specific parameters.
+(See the “Main Analysis” folder for details. Note: Readers may skip this folder and still reproduce the study’s results using the authors’ output files.)
 
-The readers can re-run the MCMC analysis by executing the MCMC application file by clicking on the file (e.g., mcsim.EBAll.model.exe) and entering the name of MCMC input and output files, respectively, such as “EBHumanMCMC_3365.in” and “EBHumanMCMC_3365.out” (one chain for one input file each species).  
+•	Supplemental Analysis: MCMC calibration using EB-specific parameters only.
+(See the “Supplemental Analysis” folder. This analysis follows the same steps as the main analysis but uses a simplified parameter set.)
 
+In either case, users can initiate the MCMC run by executing the appropriate application file (e.g., mcsim.EBAll.model.exe) and specifying the corresponding input and output files (e.g., EBHumanMCMC_3365.in, EBHumanMCMC_3365.out). Each input file corresponds to one MCMC chain per species.
 
-
-
-
+Note: A comparison of results from the main and supplemental analyses is presented in Supplemental Tables S8–S11.
