@@ -1,0 +1,575 @@
+# ------------------------------------------
+# Rat MCMC
+# cd ./mcsim-6.2.0/IRIS_EB/modeling/MCMC/RatHier
+
+Integrate (Lsodes, 1e-6, 1e-6, 1);
+
+MCMC ("MCMC.default.out","",  # name of output and restart file
+  "",         # name of data file
+  200000,0,   # iterations, print predictions flag,
+  1, 200000,   # printing frequency, iters to print
+  5916);  # random seed (default)
+
+
+Level { #Population level
+
+    #Error distributions
+    
+    # Distrib( Ve_CalvPPM ,        LogUniform , 0.01 , 3.3 );
+    Distrib( Ve_CV     ,           LogUniform , 0.01 , 3.3 );    
+    # Distrib( Ve_Cart ,           LogUniform , 0.01 , 3.3 );
+    Distrib( Ve_CFat ,             LogUniform , 0.01 , 3.3 );
+    Distrib( Ve_CLung ,            LogUniform , 0.01 , 3.3 );
+    Distrib( Ve_CLiv ,             LogUniform , 0.01 , 3.3 ); 
+    Distrib( Ve_AUrineMAmg,        LogUniform , 0.01 , 3.3 );
+    # Distrib( Ve_AMetTotalmg,     LogUniform , 0.01 , 3.3 );
+    # Distrib( Ve_ChamberConc,     LogUniform , 0.01 , 3.3 );
+    
+    # Likelihood (CalvPPM,         LogNormal_v, Prediction(CalvPPM),     Ve_CalvPPM);
+    Likelihood (CV,                LogNormal_v, Prediction(CV),          Ve_CV); 
+    # Likelihood (Cart,            LogNormal_v, Prediction(Cart),        Ve_Cart); 
+    Likelihood (CFat,              LogNormal_v, Prediction(CFat),        Ve_CFat); 
+    Likelihood (CLung,             LogNormal_v, Prediction(CLung),       Ve_CLung);     
+    Likelihood (CLiv,              LogNormal_v, Prediction(CLiv),        Ve_CLiv); 
+    Likelihood (AUrineMAmg,        LogNormal_v, Prediction(AUrineMAmg),  Ve_AUrineMAmg);    
+    # Likelihood (AMetTotalmg,     LogNormal_v, Prediction(AMetTotalmg), Ve_AMetTotalmg);
+    # Likelihood (ChamberConc,     LogNormal_v, Prediction(ChamberConc), Ve_ChamberConc);
+    
+    ###### POPULATION MEANS
+    
+    
+    # Distrib ( M_QCC     , TruncNormal,    1.0 , 0.375, 0.25, 1.75);
+    # Distrib ( M_QPC     , TruncNormal,    1.0 , 0.375, 0.25, 1.75);
+
+    # Distrib ( M_QFatC     , TruncNormal,    1.0 , 0.375, 0.25, 1.75);
+    # Distrib ( M_QLivC     , TruncNormal,    1.0 , 0.15, 0.7, 1.3);
+    # Distrib ( M_QSptC     , TruncNormal,    1.0 , 0.15, 0.7, 1.3);
+
+    # Distrib (M_VFatC     , TruncNormal,    1.0 , 0.375, 0.25, 1.75);
+    # Distrib (M_VLivC     , TruncNormal,	   1.0 , 0.15, 0.7, 1.3);
+    # Distrib (M_VRptC     , TruncNormal,    1.0 , 0.15, 0.7, 1.3);
+    # Distrib (M_VLungC    , TruncNormal,	   1.0 , 0.15, 0.7, 1.3);
+
+    Distrib ( M_lnPBC       , TruncNormal,     0, 0.6, -1.8, 1.8);
+    Distrib ( M_lnPFatC     , TruncNormal,     0, 0.6, -1.8, 1.8);
+    Distrib ( M_lnPLivC     , TruncNormal,     0, 0.6, -1.8, 1.8);
+    Distrib ( M_lnPRptC     , TruncNormal,     0, 0.6, -1.8, 1.8);
+    Distrib ( M_lnPSptC     , TruncNormal,     0, 0.6, -1.8, 1.8);
+    Distrib ( M_lnPLungC    , TruncNormal,     0, 0.6, -1.8, 1.8); 
+    
+    Distrib ( M_lnVmaxC         , TruncNormal,    0, 0.6, -1.8, 1.8);
+    Distrib ( M_lnKMC           , TruncNormal,    0, 0.6, -1.8, 1.8);
+    
+    Distrib ( M_lnVmax2C         , Uniform ,	-2.4, 2.4);
+    Distrib ( M_lnKM2C           , Uniform ,	-2.4, 2.4);
+    
+    Distrib ( M_lnVmaxLungC      , Uniform ,	-2.4, 2.4);
+    Distrib ( M_lnKMLungC        , Uniform ,	-2.4, 2.4);
+    
+    Distrib ( M_lnFmeteC    , TruncNormal,     -0.85, 1, -3.9, 2.2);
+    Distrib ( M_lnKmaC      , TruncNormal,     0, 0.6, -1.8, 1.8);
+    Distrib ( M_lnKpgaC     , TruncNormal,     0, 0.6, -1.8, 1.8);
+ 
+
+    ###### POPULATION VARIANCES
+    # Distrib   ( V_QCC     , HalfNormal, 0.3);
+    # Distrib   ( V_QPC     , HalfNormal, 0.3);
+
+    # Distrib   ( V_QFatC     , HalfNormal, 0.3);
+    # Distrib   ( V_QLivC     , HalfNormal, 0.3);
+    # Distrib   ( V_QSptC     , HalfNormal, 0.3);
+    
+    # Distrib   ( V_VFatC      , HalfNormal, 0.3);
+    # Distrib   ( V_VLivC      , HalfNormal, 0.3);
+    # Distrib   ( V_VRptC      , HalfNormal, 0.3);
+    # Distrib   ( V_VLungC     , HalfNormal, 0.3);
+
+    Distrib ( V_lnPBC	        , HalfNormal, 0.3);
+    Distrib ( V_lnPFatC	      , HalfNormal, 0.3);
+    Distrib ( V_lnPLivC	      , HalfNormal, 0.3);
+    Distrib ( V_lnPRptC       , HalfNormal, 0.3 );
+    Distrib ( V_lnPSptC	      , HalfNormal, 0.3 );
+    Distrib ( V_lnPLungC      , HalfNormal, 0.3); 
+    
+    Distrib ( V_lnVmaxC       ,  HalfNormal, 0.3);
+    Distrib ( V_lnKMC	        ,  HalfNormal, 0.3);
+    Distrib ( V_lnVmax2C      ,  HalfNormal, 0.3);
+    Distrib ( V_lnKM2C        ,  HalfNormal, 0.3);
+    Distrib ( V_lnVmaxLungC	  ,  HalfNormal, 0.3);
+    Distrib ( V_lnKMLungC     ,  HalfNormal, 0.3);
+    # Distrib ( V_lnVmaxRptC	,  HalfNormal, 0.3);
+    # Distrib ( V_lnKMRptC    ,  HalfNormal, 0.3);
+    
+    Distrib ( V_lnFmeteC      ,  HalfNormal, 0.3);
+    Distrib ( V_lnKmaC        ,  HalfNormal, 0.3);
+    Distrib ( V_lnKpgaC       ,  HalfNormal, 0.3);
+
+    
+    
+Level { #Study level
+      
+    # Distrib( QCC     , TruncNormal_v,  M_QCC   , V_QCC  ,  0.2, 1.8);
+    # Distrib( QPC     , TruncNormal_v,  M_QPC   , V_QPC  ,  0.2, 1.8);
+
+    # Distrib( QFatC     , TruncNormal_v,  M_QFatC     , V_QFatC   ,  0.2, 1.8);
+    # Distrib( QLivC     , TruncNormal_v,  M_QLivC     , V_QLivC   ,  0.7, 1.3);
+    # Distrib( QSptC     , TruncNormal_v,  M_QSptC     , V_QSptC   ,  0.7, 1.3);
+
+    # Distrib ( VFatC     , TruncNormal_v,  M_VFatC     , V_VFatC      ,  0.2, 1.8);
+    # Distrib ( VLivC  	  , TruncNormal_v,  M_VLivC  	  , V_VLivC      ,  0.7, 1.3);
+    # Distrib ( VRptC     , TruncNormal_v,  M_VRptC     , V_VRptC      ,  0.7, 1.3);
+    # Distrib ( VLungC    , TruncNormal_v,  M_VLungC    , V_VLungC     ,  0.7, 1.3);
+
+    Distrib(	lnPBC,	    TruncNormal_v,	M_lnPBC	    , V_lnPBC,	     -1.8, 1.8);
+    Distrib(	lnPFatC,	  TruncNormal_v,	M_lnPFatC	  , V_lnPFatC,	   -1.8, 1.8);
+    Distrib(	lnPLivC,	  TruncNormal_v,	M_lnPLivC  	, V_lnPLivC,	   -1.8, 1.8);
+    Distrib(	lnPRptC,	  TruncNormal_v,	M_lnPRptC	  , V_lnPRptC,	   -1.8, 1.8);
+    Distrib(	lnPSptC,	  TruncNormal_v,	M_lnPSptC	  , V_lnPSptC,	   -1.8, 1.8);
+    Distrib(	lnPLungC,	  TruncNormal_v,	M_lnPLungC	, V_lnPLungC,	   -1.8, 1.8);							
+   
+    Distrib(	lnVmaxC,	    TruncNormal_v, 	M_lnVmaxC	    , V_lnVmaxC,	     -1.8, 1.8	);
+    Distrib(	lnKMC,	      TruncNormal_v,	M_lnKMC	      , V_lnKMC,   	     -1.8, 1.8	);
+   
+    Distrib(	lnVmax2C,	    TruncNormal_v, 	M_lnVmax2C	  , V_lnVmax2C,	     -2.4, 2.4  );
+    Distrib(	lnKM2C,	      TruncNormal_v, 	M_lnKM2C	    , V_lnKM2C,	       -2.4, 2.4	);
+   
+    Distrib(	lnVmaxLungC,	TruncNormal_v, 	M_lnVmaxLungC	, V_lnVmaxLungC,	 -2.4, 2.4);
+    Distrib(	lnKMLungC,	  TruncNormal_v, 	M_lnKMLungC	  , V_lnKMLungC,	   -2.4, 2.4);
+
+    Distrib(  lnFmeteC,   TruncNormal_v,  M_lnFmeteC    , V_lnFmeteC,    -3.9, 2.2);
+    Distrib(  lnKmaC,     TruncNormal_v,  M_lnKmaC      , V_lnKmaC,      -1.8, 1.8);
+    Distrib(  lnKpgaC,    TruncNormal_v,  M_lnKpgaC     , V_lnKpgaC,     -1.8, 1.8);
+   
+ 
+  ############### DATA USED IN CALIBRATION #############
+
+Level { 
+  
+Experiment {  
+    #### Study 1. Male Rat,  Haddad 1999   
+    #-- 50 ppm
+    #experiment 1 
+    
+    BWmeas =  0.25 ;
+    Species = 2 ; 
+    ExpoInduc = 1;
+    
+    
+    expoday =PerDose (50, 24, 0, 4);  # PerDose(exposure event, initial time, exposure duration);
+    expowk  =PerDose (1.0, 168,  0, 4); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+    expodur =PerDose (1.0, 384, 0, 4); # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+    
+    Print (CV, 4.083 , 4.5 , 5 , 5.5 , 6);
+    Data  (CV, 0.821 , 0.523 , 0.313 , 0.191 , 0.142);
+
+  Print(CalvPPM , 0);
+  Data (CalvPPM , -1);
+  # Print(CV , 0);
+  # Data (CV , -1);
+  Print(Cart , 0);
+  Data (Cart , -1);
+  Print(CFat , 0);
+  Data (CFat , -1);
+  Print(CLung , 0);
+  Data (CLung , -1);
+  Print(CLiv  , 0);
+  Data (CLiv  , -1);
+  Print(AUrineMAmg  , 0);
+  Data (AUrineMAmg  , -1);
+  Print(AMetTotalmg , 0);
+  Data (AMetTotalmg , -1);
+  Print(ChamberConc , 0);
+  Data (ChamberConc , -1);
+  
+ }  #end of experiment 1 
+
+  
+Experiment {  
+    #### Study 1. Male Rat,  Haddad 1999   
+    #1.2 -- 100 ppm
+    #experiment 2 
+    
+    BWmeas =  0.25 ;
+    Species = 2 ; 
+    ExpoInduc = 1;
+
+    expoday =PerDose (100, 24, 0, 4);  # PerDose(exposure event, initial time, exposure duration);
+    expowk  =PerDose (1.0, 168,  0, 4); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+    expodur =PerDose (1.0, 384, 0, 4); # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+    
+    Print (CV,4.083 , 4.5 , 5 , 5.5 , 6);
+    Data (CV, 1.94,	1.29,	0.88,	0.56,	0.38);
+    
+    Print(CalvPPM , 0);
+    Data (CalvPPM , -1);
+    # Print(CV , 0);
+    # Data (CV , -1);
+    Print(Cart , 0);
+    Data (Cart , -1);
+    Print(CFat , 0);
+    Data (CFat , -1);
+    Print(CLung , 0);
+    Data (CLung , -1);
+    Print(CLiv  , 0);
+    Data (CLiv  , -1);
+    Print(AUrineMAmg  , 0);
+    Data (AUrineMAmg  , -1);
+    Print(AMetTotalmg , 0);
+    Data (AMetTotalmg , -1);
+    Print(ChamberConc , 0);
+    Data (ChamberConc , -1);
+    
+  }  #end of experiment 2 
+  
+  Experiment {  
+    #### Study 1. Male Rat,  Haddad 1999   
+    #1.3 -- 200 ppm
+    #experiment 3 
+    
+    BWmeas =  0.25 ;
+    Species = 2 ; 
+    ExpoInduc = 1;
+    
+    
+    expoday =PerDose (200, 24, 0, 4);   # PerDose(exposure event, initial time, exposure duration);
+    expowk  =PerDose (1.0, 168,  0, 4); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+    expodur =PerDose (1.0, 384, 0, 4);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+    
+    Print (CV,4.083 , 4.5 , 5 , 5.5 , 6);
+    Data (CV, 7.71,	4.98,	3.51,	2.49,	1.69);
+    
+    Print(CalvPPM , 0);
+    Data (CalvPPM , -1);
+    # Print(CV , 0);
+    # Data (CV , -1);
+    Print(Cart , 0);
+    Data (Cart , -1);
+    Print(CFat , 0);
+    Data (CFat , -1);
+    Print(CLung , 0);
+    Data (CLung , -1);
+    Print(CLiv  , 0);
+    Data (CLiv  , -1);
+    Print(AUrineMAmg  , 0);
+    Data (AUrineMAmg  , -1);
+    Print(AMetTotalmg , 0);
+    Data (AMetTotalmg , -1);
+    Print(ChamberConc , 0);
+    Data (ChamberConc , -1);
+    
+  }  #end of experiment 3 
+  
+  Experiment {  
+    #### Study 1. Male Rat,  Haddad 1999   
+    #1.4 -- 500 ppm
+    #experiment 4 
+    
+    BWmeas =  0.25 ;
+    Species = 2 ;  
+    ExpoInduc = 1;
+    
+    
+    expoday =PerDose (500, 24, 0, 4);  # PerDose(exposure event, initial time, exposure duration);
+    expowk  =PerDose (1.0, 168,  0, 4);# PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+    expodur =PerDose (1.0, 384, 0, 4); # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+    
+    Print (CV,4.083 , 4.5 , 5 , 5.5 , 6);
+    Data (CV, 21.4, 17.95,15.37,12.05,10.3);
+    
+    Print(CalvPPM , 0);
+    Data (CalvPPM , -1);
+    # Print(CV , 0);
+    # Data (CV , -1);
+    Print(Cart , 0);
+    Data (Cart , -1);
+    Print(CFat , 0);
+    Data (CFat , -1);
+    Print(CLung , 0);
+    Data (CLung , -1);
+    Print(CLiv  , 0);
+    Data (CLiv  , -1);
+    Print(AUrineMAmg  , 0);
+    Data (AUrineMAmg  , -1);
+    Print(AMetTotalmg , 0);
+    Data (AMetTotalmg , -1);
+    Print(ChamberConc , 0);
+    Data (ChamberConc , -1);
+    
+  }  #end of experiment 4 
+  
+} #end of Rat,  Haddad 1999 
+
+
+Level { 
+
+  Experiment {  
+    #### Study Take 2020, rat  
+    #--  25 ppm
+    #experiment 1 
+    
+    BWmeas =   0.35 ;
+    Species = 2 ; 
+    ExpoInduc = 1;
+        
+    expoday =PerDose (25, 24, 0, 6);  # PerDose(exposure event, initial time, exposure duration);
+    expowk  =PerDose (1.0, 168,  0, 6); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+    expodur =PerDose (1.0, 384, 0, 6); # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+    
+    Print (CV, 0.53 , 1.019 , 3.016 , 5.992 , 6.97 , 9.008);
+    Data  (CV, 0.261 , 0.354 , 0.417 , 0.417 , 0.168 , 0.075);
+
+  Print(CalvPPM , 0);
+  Data (CalvPPM , -1);
+  # Print(CV , 0);
+  # Data (CV , -1);
+  Print(Cart , 0);
+  Data (Cart , -1);
+  Print(CFat , 0);
+  Data (CFat , -1);
+  Print(CLung , 0);
+  Data (CLung , -1);
+  Print(CLiv  , 0);
+  Data (CLiv  , -1);
+  Print(AUrineMAmg  , 0);
+  Data (AUrineMAmg  , -1);
+  Print(AMetTotalmg , 0);
+  Data (AMetTotalmg , -1);
+  Print(ChamberConc , 0);
+  Data (ChamberConc , -1);
+  
+ }  #end of experiment 0
+ 
+
+  Experiment {  
+    #### Study Take 2020, rat  
+    #-- 50 ppm
+    #experiment 1 
+    
+    BWmeas =   0.35 ;
+    Species = 2 ; 
+    ExpoInduc = 1;
+        
+    expoday =PerDose (50, 24, 0, 6);  # PerDose(exposure event, initial time, exposure duration);
+    expowk  =PerDose (1.0, 168,  0, 6); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+    expodur =PerDose (1.0, 384, 0, 6); # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+    
+    Print (CV, 0.53 , 1.019 , 3.016 , 5.992 , 7.011 , 8.967);
+    Data  (CV, 0.417 , 0.541 , 0.728 , 0.79 , 0.292 , 0.137);
+
+  Print(CalvPPM , 0);
+  Data (CalvPPM , -1);
+  # Print(CV , 0);
+  # Data (CV , -1);
+  Print(Cart , 0);
+  Data (Cart , -1);
+  Print(CFat , 0);
+  Data (CFat , -1);
+  Print(CLung , 0);
+  Data (CLung , -1);
+  Print(CLiv  , 0);
+  Data (CLiv  , -1);
+  Print(AUrineMAmg  , 0);
+  Data (AUrineMAmg  , -1);
+  Print(AMetTotalmg , 0);
+  Data (AMetTotalmg , -1);
+  Print(ChamberConc , 0);
+  Data (ChamberConc , -1);
+  
+ }  #end of experiment 1 
+
+
+  Experiment {  
+    #### Study Take 2020, rat  
+    #1.2 -- 100 ppm
+    #experiment 2 
+    
+    BWmeas =   0.35 ;
+    Species = 2 ; 
+    ExpoInduc = 1;
+    
+    
+    expoday =PerDose (100, 24, 0, 6);  # PerDose(exposure event, initial time, exposure duration);
+    expowk  =PerDose (1.0, 168,  0, 6); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+    expodur =PerDose (1.0, 384, 0, 6); # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+    
+    Print (CV,0.489 , 1.019 , 3.016 , 6.033 , 7.011 , 9.008);
+    Data (CV, 0.945 , 1.412 , 1.598 , 1.971 , 0.697 , 0.354);
+    
+    Print(CalvPPM , 0);
+    Data (CalvPPM , -1);
+    # Print(CV , 0);
+    # Data (CV , -1);
+    Print(Cart , 0);
+    Data (Cart , -1);
+    Print(CFat , 0);
+    Data (CFat , -1);
+    Print(CLung , 0);
+    Data (CLung , -1);
+    Print(CLiv  , 0);
+    Data (CLiv  , -1);
+    Print(AUrineMAmg  , 0);
+    Data (AUrineMAmg  , -1);
+    Print(AMetTotalmg , 0);
+    Data (AMetTotalmg , -1);
+    Print(ChamberConc , 0);
+    Data (ChamberConc , -1);
+    
+  }  #end of experiment 2 
+  
+  Experiment {  
+    #### Study Take 2020, rat  
+    #1.3 -- 200 ppm
+    #experiment 3 
+    
+    BWmeas =   0.35 ;
+    Species = 2 ; 
+    ExpoInduc = 1;
+    
+    
+    expoday =PerDose (200, 24, 0, 6);   # PerDose(exposure event, initial time, exposure duration);
+    expowk  =PerDose (1.0, 168,  0, 6); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+    expodur =PerDose (1.0, 384, 0, 6);  # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+    
+    Print (CV,0.489 , 1.06 , 3.057 , 5.992 , 6.929 , 9.008);
+    Data (CV, 1.629 , 2.22 , 3.495 , 4.21 , 1.692 , 0.417);
+    
+
+    Print(CalvPPM , 0);
+    Data (CalvPPM , -1);
+    # Print(CV , 0);
+    # Data (CV , -1);
+    Print(Cart , 0);
+    Data (Cart , -1);
+    Print(CFat , 0);
+    Data (CFat , -1);
+    Print(CLung , 0);
+    Data (CLung , -1);
+    Print(CLiv  , 0);
+    Data (CLiv  , -1);
+    Print(AUrineMAmg  , 0);
+    Data (AUrineMAmg  , -1);
+    Print(AMetTotalmg , 0);
+    Data (AMetTotalmg , -1);
+    Print(ChamberConc , 0);
+    Data (ChamberConc , -1);
+    
+  }  #end of experiment  
+  
+ 
+} #end of Rat, Take 2000
+
+
+Level { # Fuciarelli,2000, individual data
+
+
+
+ Experiment {  
+ 
+  #### Study 2.  75 ppm, male Rat,   Fuciarelli,2000
+  Species =  2 ;
+  BWmeas =  0.25;
+  ExpoInduc = 1;
+  
+  expoday =PerDose (75, 24, 0, 6);    # PerDose(exposure event, initial time, exposure duration);
+  expowk  =PerDose (1.0, 168,  0, 6); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+  expodur =PerDose (1.0, 384, 0, 6); # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+  
+Print (CV, 6.234 , 6.269 , 6.27 , 6.468 , 6.502 , 6.536 , 6.701 , 6.702 , 6.77 , 7.018 , 7.035 , 7.036 , 7.968 , 7.985 , 8.02 , 8.801 , 8.985 , 8.986 , 12.051 , 14.985 , 15.07 , 15.151 , 17.969 , 18.053 , 23.984 , 23.985 , 23.986 , 29.768 , 29.785 , 29.786);
+Data  (CV, 0.282 , 0.286 , 0.27 , 0.16 , 0.197 , 0.178 , 0.165 , 0.147 , 0.147 , 0.0898 , 0.106 , 0.0739 , 0.1 , 0.0834 , 0.0799 , 0.0543 , 0.0714 , 0.0528 , 0.0219 , 0.0223 , 0.0188 , 0.0168 , 0.00727 , 0.00623 , 0.00802 , 0.00668 , 0.0058 , 0.00396 , 0.00343 , 0.00226);
+
+Print (CLiv,6.234 , 6.269 , 6.27 , 6.468 , 6.502 , 6.536 , 6.701 , 6.702 , 6.77 , 7.018 , 7.035 , 7.036 , 7.968 , 7.985 , 8.02 , 8.801 , 8.985);
+Data  (CLiv, 0.15 , 0.14 , 0.124 , 0.101 , 0.143 , 0.126 , 0.121 , 0.105 , 0.0656 , 0.061 , 0.0561 , 0.0322 , 0.128 , 0.124 , 0.0384 , 0.0334 , 0.0203);
+  
+Print (CFat, 6.234 , 6.269 , 6.27 , 6.468 , 6.502 , 6.536 , 6.701 , 6.702 , 6.77 , 7.018 , 7.035 , 7.036 , 7.968 , 7.985 , 8.02 , 8.801 , 8.985 , 8.986 , 12.034 , 12.052 , 12.07 , 14.984 , 15.069 , 15.153 , 17.901 , 17.969 , 18.053 , 23.984 , 23.985 , 23.986 , 29.768 , 29.785);
+Data  (CFat,  20.7 , 12.5 , 8.34 , 11.9 , 5.69 , 4.12 , 21.5 , 6.38 , 6.06 , 15.8 , 11.7 , 7.31 , 4.23 , 3.32 , 3.26 , 6.51 , 4.5 , 2.85 , 0.656 , 2.78 , 1.35 , 2.31 , 3.71 , 1.2 , 1.31 , 1.45 , 0.633 , 0.597 , 0.146 , 0.102 , 0.412 , 0.336); 
+
+Print (CLung, 6.234 , 6.269 , 6.27 , 6.468 , 6.502 , 6.536 , 6.701 , 6.702 , 6.77 , 7.018 , 7.035 , 7.036 , 7.968 , 7.985 , 8.02 , 8.801 , 8.985 , 8.986 , 12.034 , 12.052 , 12.07 , 14.984 , 15.069 , 15.153 , 17.901 , 17.969 , 18.053 , 23.984 , 23.985);  
+Data  (CLung, 1.02 , 1.2 , 0.389 , 0.396 , 1.09 , 0.761 , 0.345 , 0.239 , 0.143 , 0.368 , 0.595 , 0.342 , 0.177 , 0.186 , 0.123 , 0.091 , 0.252 , 0.101 , 0.0322 , 0.0175 , 0.0801 , 0.0235 , 0.0341 , 0.0492 , 0.0153 , 0.0254 , 0.014 , 0.0164 , 0.0141); 
+
+Print (AUrineMAmg ,12.001 , 12.002 , 12.003 , 12.004 , 12.005 , 24.001 , 24.002 , 24.003 , 24.004 , 24.005 , 48.001 , 48.002 , 48.003 , 48.004 , 48.005);
+Data  (AUrineMAmg ,1.25 , 0.944 , 0.884 , 0.867 , 0.531 , 1.396 , 1.175 , 1.072 , 1.005 , 0.881 , 1.444 , 1.399 , 1.177 , 1.064 , 1.023);  
+
+
+  Print(CalvPPM , 0);
+  Data (CalvPPM , -1);
+  # Print(CV , 0);
+  # Data (CV , -1);
+  Print(Cart , 0);
+  Data (Cart , -1);
+  # Print(CFat , 0);
+  # Data (CFat , -1);
+  # Print(CLung , 0);
+  # Data (CLung , -1);
+  # Print(CLiv  , 0);
+  # Data (CLiv  , -1);
+  # Print(AUrineMAmg  , 0);
+  # Data (AUrineMAmg  , -1);
+  Print(AMetTotalmg , 0);
+  Data (AMetTotalmg , -1);
+  Print(ChamberConc , 0);
+  Data (ChamberConc , -1);
+
+} # end of experiment 
+
+
+  Experiment { #experiment  --  750 ppm, Fuciarelli,2000
+  #### Study 2.  Female Rat,   Fuciarelli,2000
+  Species =  2 ;
+  BWmeas =  0.159;
+  ExpoInduc = 1;
+      
+  expoday =PerDose (750, 24, 0, 6);    # PerDose(exposure event, initial time, exposure duration);
+  expowk  =PerDose (1.0, 168,  0, 6); # PerDose(exposure on/off, weekly cycle (whole week/hours), initial time, exp.duration)
+  expodur =PerDose (1.0, 384, 0, 6); # PerDose(exposure on/off, study cycle (whole study period/hours), initial time, exp.duration) 
+  
+  Print (CV, 6.368 , 6.435 , 6.453 , 6.618 , 6.619 , 6.67 , 7.034 , 7.069 , 7.103 , 7.534 , 7.552 , 7.586 , 9.001 , 9.019 , 9.136 , 12.034 , 
+  12.052 , 12.07 , 15.151 , 15.202 , 15.253 , 18.101 , 18.152 , 18.22 , 24.034 , 24.085 , 24.086 , 29.984 , 30.002 , 30.003 , 42.301 , 42.502 , 
+  42.636);
+  
+  Data  (CV, 9.95 , 9.98 , 10.5 , 8.19 , 7.93 , 8.39 , 7.58 , 5.02 , 6.7 , 3.79 , 4.58 , 4.21 , 2.24 , 1.66 , 2.52 , 0.489 , 0.561 , 0.706 , 0.222 , 0.294 , 0.219 , 0.194 , 0.217 , 0.175 , 0.0824 , 0.134 , 0.111 , 0.037 , 0.0509 , 0.0474 , 0.00577 , 0.0118 , 0.00945);
+
+  Print (CLiv, 6.367 , 6.433 , 6.45 , 6.617 , 6.6171 , 6.667 , 7.033 , 7.067 , 7.1 , 7.533 , 7.55 , 7.583 , 9 , 9.017 , 9.133 , 12.033 , 12.05 , 12.067 , 15.15 , 15.25 , 18.1 , 18.217);
+  
+  Data  (CLiv, 18.9 , 17.3 , 18.3 , 15.1 , 14.7 , 17.4 , 20.4 , 11.9 , 13.1 , 8.8 , 7.79 , 9.11 , 1.91 , 1.85 , 5.36 , 0.252 , 0.284 , 0.311 , 0.113 , 0.0766 , 0.0641 , 0.0565);
+
+  Print (CFat,  6.367 , 6.433 , 6.45 , 6.617 , 6.6171 , 6.667 , 7.033 , 7.067 , 7.1 , 7.533 , 7.55 , 7.583 , 9 , 9.017 , 9.133 , 12.033 , 12.05 , 12.067 , 15.15 , 15.2 , 15.25 , 18.1 , 18.15 , 18.217 , 24.033 , 24.085 , 24.086 , 29.984 , 30.002 , 30.003 , 42.301 , 42.502 , 42.636);
+  
+  Data  (CFat,  529 , 205 , 689 , 429 , 345 , 206 , 146 , 102 , 364 , 161 , 104 , 345 , 73.8 , 294 , 121 , 31.3 , 22.6 , 35.8 , 30.2 , 32.4 , 7.96 , 11.3 , 9.53 , 5.06 , 5.39 , 8.05 , 0.883 , 1.48 , 1.96 , 0.62 , 0.172 , 0.402 , 0.137); 
+
+  Print (CLung,  6.368 , 6.435 , 6.453 , 6.618 , 6.619 , 6.67 , 7.034 , 7.069 , 7.103 , 7.534 , 7.552 , 7.586 , 9.001 , 9.019 , 9.136 , 12.034 , 12.052 , 12.07 , 15.151 , 15.202 , 15.253 , 18.101 , 18.152 , 18.22 , 24.034 , 24.085 , 24.086 , 29.984 , 30.002 , 42.502 , 42.636);
+  
+  Data  (CLung,9.17 , 6.3 , 9.24 , 12 , 4.99 , 2.76 , 4.81 , 2.43 , 7.08 , 3.11 , 2.61 , 3.69 , 1.81 , 1.15 , 1.52 , 0.573 , 0.573 , 0.447 , 0.536 , 0.401 , 0.246 , 0.344 , 0.375 , 0.2 , 0.102 , 0.165 , 0.0519 , 0.0568 , 0.05 , 0.027 , 0.0243); 
+
+  Print (AUrineMAmg , 12.001, 12.002, 12.003, 12.004, 12.005, 24.001, 24.002, 24.003, 24.004, 24.005, 48.001, 48.002, 48.003, 48.004, 48.005);
+  Data (AUrineMAmg , 6.83 , 6.41 , 5.37 , 5.05 , 2.6 , 9.02 , 7.62 , 7.41 , 6.87 , 5.07 , 9.846 , 8.33 , 8.319 , 7.471 , 5.739);  
+
+  Print(CalvPPM , 0);
+  Data (CalvPPM , -1);
+  # Print(CV , 0);
+  # Data (CV , -1);
+  Print(Cart , 0);
+  Data (Cart , -1);
+  # Print(CFat , 0);
+  # Data (CFat , -1);
+  # Print(CLung , 0);
+  # Data (CLung , -1);
+  # Print(CLiv  , 0);
+  # Data (CLiv  , -1);
+  # Print(AUrineMAmg  , 0);
+  # Data (AUrineMAmg  , -1);
+  Print(AMetTotalmg , 0);
+  Data (AMetTotalmg , -1);
+  Print(ChamberConc , 0);
+  Data (ChamberConc , -1);
+
+     } # end of experiment 
+
+    }  #  end of Fuciarelli,2000
+  
+ } # end of study level
+
+} # Population level
+
+End.
+  
+  
