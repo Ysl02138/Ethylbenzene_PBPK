@@ -1,5 +1,5 @@
 
-README Supplementary material for the current work (Ethylbenzene PBPK model) 
+README Supplementary material for Lin et al. Ethylbenzene PBPK model
 
 =========================================
 
