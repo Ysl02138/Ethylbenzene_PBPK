@@ -51,7 +51,7 @@ The readers can replace these output files provided by the authors with the newl
 
 **plots**: All plots in the manuscript were saved in this folder.
 
-**MCMC Replication Analysis (Optional – see instructions on the last page for details):
+**MCMC Replication Analysis (Optional – see instructions below for details):
 In addition to using the provided model outputs, readers have the option to replicate the MCMC analyses by re-running the calibration. Two types of MCMC analyses are included:
 
 •	Main Analysis: Full MCMC calibration of both physiological and EB-specific parameters.
