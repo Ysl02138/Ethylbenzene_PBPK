@@ -54,11 +54,11 @@ The readers can replace these output files provided by the authors with the newl
 **MCMC replication analysis (Optional – see instructions below for details):
 In addition to using the provided model outputs, readers have the option to replicate the MCMC analyses by re-running the calibration. Two types of MCMC analyses are included:
 
-•	Main Analysis: Full MCMC calibration of both physiological and EB-specific parameters.
-(See the “Main Analysis” folder for details. Note: Readers may skip this folder and still reproduce the study’s results using the authors’ output files.)
+•	Main analysis: Full MCMC calibration of both physiological and EB-specific parameters.
+(See the “Main analysis” folder for details. Note: Readers may skip this folder and still reproduce the study’s results using the authors’ output files.)
 
-•	Supplemental Analysis: MCMC calibration using EB-specific parameters only.
-(See the “Supplemental Analysis” folder. This analysis follows the same steps as the main analysis but uses a simplified parameter set.)
+•	Supplemental analysis: MCMC calibration using EB-specific parameters only.
+(See the “Supplemental analysis” folder. This analysis follows the same steps as the main analysis but uses a simplified parameter set.)
 
 In either case, users can initiate the MCMC run by executing the appropriate application file (e.g., mcsim.EBAll.model.exe) and specifying the corresponding input and output files (e.g., EBHumanMCMC_3365.in, EBHumanMCMC_3365.out). Each input file corresponds to one MCMC chain per species.
 
