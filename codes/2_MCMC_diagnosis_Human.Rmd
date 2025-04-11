@@ -1,7 +1,7 @@
 # ---
-# title: "EB - Markov chain Monte Carlo CalibRation Diagnosis"
+# title: "EB - Markov chain Monte Carlo CalibRation Diagnosis for humans"
 # author: "Yu-Sheng Lin et al" 
-# date: "2023/02/05 (update: `r Sys.Date()`)"
+# date: "2025/03/13 (update: `r Sys.Date()`)"
 # output: 
 #  html_document:
 # fig_caption: yes  
@@ -46,42 +46,62 @@ Human_x <- mcmc_array(data = list(Humanjob1, Humanjob2, Humanjob3, Humanjob4))
 ```
 
 # Andrew Gelman Scale Reduction Factor
-# ## 
-# This section will produce results for posterior distributions for Supplemental Table S7 and S10 (output results from MCMC analysis)
-# ## 
-# From Supplemenal Table S7, one can use the equation in Supplemental Table S1 to calculate model parameters. Additional details are given in Supplemental Section 2.2 
-# ## 
-# For example,  PB (blood/air paritition coefficient) = PB0 × exp(lnPBC)  ----- this is can be seen in Supplemental Table S1 
-# where PB0 is the species-specific baseline point estimate (28 for human) and lnPBC is the scaling (sampled) parameter of PBC in the log scale. 
-# ##  
-# PBC = exp(lnPBC), 
-# Notethat at baseline (prior distribution, Table S4), lnPBC is assigned the baseline value of zero (0) prior to MCMC analysis (denoted as M_QLivC in 
-# the code and output).  
-# ##
-# Thus, baseline (prior distribution),                              PB (prior blood/air paritition coefficient) = 28 × exp(0) = 28 for male mice   
-# Upon completion of MCMC analysis (Supplemental Table S7),         PB (posterior blood/air paritition coefficient) = 28 × exp(-0.163) = 23.8 for male mice
-# ##  
-# For comparison, the prior vs posterior parameter distributions are shown in Table 3 (general physiological parameters) and Table 4 (EB-specific parameters)  
-# ##  
-# For Supplemental Table S10, residual error geometric standard deviation was calculated as exponential form of the square root of the error term 
-# (e.g., “Ve_CV” for EB in blood) 
+#############################################################################################
+#
+# This section presents the results for the posterior distributions in humans, as shown in 
+# Supplemental Tables S7 and S11 from Lin et # al. for the ethylbenzene PBPK model (derived from the
+# MCMC analysis).
+#
+# As detailed in Supplemental Materials, model parameters can be calculated using the scaling equations
+# provided in Supplemental Table # S1. Additional guidance can be found in Supplemental Section 2.2.
+#
+# For example, the blood/air partition coefficient (PB) is calculated as:
+#
+# PB = PB₀ × exp(lnPBC)  
+#
+# This relationship is provided in Supplemental Table S1, where **PB₀** is the species-specific baseline estimate (28 for humans),
+# and lnPBC is the sampled scaling parameter on the log scale.
+#
+# At baseline (i.e., prior to MCMC analysis), lnPBC is set to 0, as shown in the prior distributions (Supplemental Table S4).
+# Thus, the prior estimate for PB in humans is:
+#
+# PB = 28 × exp(0) = 28
+#
+# Following the MCMC analysis (see Supplemental Table S7), the posterior value for **lnPBC** in humans is -0.183. Therefore, 
+# the posterior estimate for PB becomes:
+#
+# PB = 28 × exp(-0.183) = 23.3
+#
+# This posterior value for PB in humans is also reported in Table 4 of the main text. For more detailed explanations, please refer to 
+# the Supplemental Materials of Lin et al.
+#############################################################################################
+
+# Size of output summary
+```{r}
+dim(Human_x)
+```
+
+# Andrew Gelman Scale Reduction Factor
 ```{r}
 Humanmonitor <-monitor(Human_x, digits=4, probs = c(0.025, 0.5, 0.975), warmup = floor(dim(Human_x)[1]/2))
 print(Humanmonitor)
 ```
 
-# Dalaijamts MPSRF
+# MPSRF (Multivariate Potential Scale Reduction Factor)
 # This section will produce MPSRF values for Supplemental Figure S3 traceplot
+# Note that the number 124 refers to the total number of model parameters used in the full MCMC 
+# calibration, which includes both physiological and EB-specific parameters. When physiological
+# parameters are fixed (i.e., not estimated through MCMC), please update the parameter count from 124 # to 79 accordingly.
 ```{r}
 HumanjobMPSRF1 = as.mcmc(fread("outputs/EBHumanMCMC_4880.out") |> as.data.frame(), header=T) 
 HumanjobMPSRF2 = as.mcmc(fread("outputs/EBHumanMCMC_3365.out") |> as.data.frame(), header=T) 
 HumanjobMPSRF3 = as.mcmc(fread("outputs/EBHumanMCMC_5916.out") |> as.data.frame(), header=T) 
 HumanjobMPSRF4 = as.mcmc(fread("outputs/EBHumanMCMC_6734.out") |> as.data.frame(), header=T) 
 
-x1Human <- HumanjobMPSRF1[,2:126 , drop=FALSE]
-x2Human <- HumanjobMPSRF2[,2:126 , drop=FALSE]
-x3Human <- HumanjobMPSRF3[,2:126 , drop=FALSE]
-x4Human <- HumanjobMPSRF4[,2:126 , drop=FALSE]
+x1Human <- HumanjobMPSRF1[,2:124 , drop=FALSE]
+x2Human <- HumanjobMPSRF2[,2:124 , drop=FALSE]
+x3Human <- HumanjobMPSRF3[,2:124 , drop=FALSE]
+x4Human <- HumanjobMPSRF4[,2:124 , drop=FALSE]
 
 combined_Human = mcmc.list(x1Human,x2Human,x3Human,x4Human) 
 gelman.diag(combined_Human, autoburnin=TRUE, multivariate=TRUE)
@@ -150,7 +170,7 @@ Human_corr[sample_x,,M_pars] %>% matrix(nrow = sum_chains) %>%
   `colnames<-`(Parameter[1:9]) %>%
   ggcorr(nbreaks = 5, label = T, label_size = 4, label_round = 2, size = 4, label_alpha = TRUE) +
   theme_minimal() + labs(title = "Human") + theme(plot.title = element_text(size=26, hjust = 0.5)) + theme(axis.title.x = element_blank(), axis.title.y = element_blank(), title = element_blank()) +   theme(plot.margin=grid::unit(c(0,0,0,0), "mm")) 
-ggsave("plots/suppl/Figure_S9_Correlation_matrix_Human.pdf", dpi = 1200, height = 10, width = 15, units="in")
+ggsave("plots/suppl/Figure_S9_Correlation_matrix_Human.jpg", dpi = 600, height = 10, width = 15, units="in")
 ```
 
 ```{r, include=FALSE}
