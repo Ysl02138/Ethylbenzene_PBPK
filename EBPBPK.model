@@ -228,7 +228,6 @@ QSptCtmp	= 1;	# Scaled richly perfused blood flow
   M_QFatC	= 1.0;	# initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
   M_QLivC	= 1.0;  # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
   M_QSptC = 1.0;  # initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
-  # M_QSptC. Note that QSpt is calculated as the difference between total carduac output and the sum of flow to all tissues other than QRpt
   
 # scaling parameter for tissue volumes 	
   M_VLivC = 1.0;	# initial default value, updated later by species-specific baseline value and MCMC analysis (see Supplemental Table S1-S4)
@@ -523,7 +522,7 @@ Dynamics {
   dt(ACh) = (Rodents * (QP * Calv - QP * ACh/VCh)) - (kLoss * ACh);   # change in airborne EB in exposure chamber (mg/hr)
   # CInhPPM = (ACh< 1.0e-15 ? 1.0e-15 : ACh/VCh*24450.0/MWTCE);       # CInhPPM Only used for CC inhalation
   
-  # tissue EB (mg/L)
+  # tissue blood (mg/L)
   CRpt = (ARpt/VRpt);         # EB in RPT tissue
   CSpt = (ASpt/VSpt);         # EB in SPT tissue
   CFat = (AFat/VFat);         # EB in Fat tissue
