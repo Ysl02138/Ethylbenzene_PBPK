@@ -130,7 +130,7 @@ Simulation { # 1:
   expowk  = 1;  # faction of days/week has exposure  (e.g., out of 7 days in a week, the number of days within the week had exposure) 
   expodur = 1;  # faction of study duration has exposure  (e.g., out of study week(s), the number of weeks had exposure) 
 
-  Print (Cart, CRpt, DailyAMetLiverVol, DailyAMetTotalBW34, 336);
+  Print (AUCArt, AUCR, DailyAMetLiverVol, DailyAMetTotalBW34, 336);
 }
 
 END.
