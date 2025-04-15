@@ -74,36 +74,36 @@ SetPoints (
  V_lnVmaxRptC, 
  V_lnKMRptC); 
 
-    Distrib (QCC,TruncNormal_v,  M_QCC  , V_QCC ,  0.2, 1.8);
-    Distrib (QPC,TruncNormal_v,  M_QPC  , V_QPC ,  0.2, 1.8);
+  #  Distrib (QCC,TruncNormal_v,  M_QCC  , V_QCC ,  0.2, 1.8);
+  #  Distrib (QPC,TruncNormal_v,  M_QPC  , V_QPC ,  0.2, 1.8);
     
-    Distrib ( QFatC,TruncNormal_v,  M_QFatC,V_QFatC  ,  0.2, 1.8);
-    Distrib ( QLivC,TruncNormal_v,  M_QLivC,V_QLivC  ,  0.7, 1.3);
-    Distrib ( QSptC,TruncNormal_v,  M_QSptC,V_QSptC  ,  0.7, 1.3);
+  #  Distrib ( QFatC,TruncNormal_v,  M_QFatC,V_QFatC  ,  0.2, 1.8);
+  #  Distrib ( QLivC,TruncNormal_v,  M_QLivC,V_QLivC  ,  0.7, 1.3);
+  #  Distrib ( QSptC,TruncNormal_v,  M_QSptC,V_QSptC  ,  0.7, 1.3);
     
-    Distrib ( VFatC, TruncNormal_v,  M_VFatC,  V_VFatC, 0.2, 1.8);
-    Distrib ( VLivC, TruncNormal_v,  M_VLivC,  V_VLivC, 0.7, 1.3);
-    Distrib ( VRptC, TruncNormal_v,  M_VRptC,  V_VRptC, 0.7, 1.3);
-    Distrib ( VLungC,TruncNormal_v,  M_VLungC, V_VLungC,0.7, 1.3);
+  #  Distrib ( VFatC, TruncNormal_v,  M_VFatC,  V_VFatC, 0.2, 1.8);
+  #  Distrib ( VLivC, TruncNormal_v,  M_VLivC,  V_VLivC, 0.7, 1.3);
+  #  Distrib ( VRptC, TruncNormal_v,  M_VRptC,  V_VRptC, 0.7, 1.3);
+  #  Distrib ( VLungC,TruncNormal_v,  M_VLungC, V_VLungC,0.7, 1.3);
     
-    Distrib(	lnPBC,	    TruncNormal_v,	M_lnPBC	    , V_lnPBC,	     -1.8, 1.8);
-    Distrib(	lnPFatC,	  TruncNormal_v,	M_lnPFatC   , V_lnPFatC,	   -1.8, 1.8);
-    Distrib(	lnPLivC,	  TruncNormal_v,	M_lnPLivC  	, V_lnPLivC,	   -1.8, 1.8);
-    Distrib(	lnPRptC,	  TruncNormal_v,	M_lnPRptC   , V_lnPRptC,	   -1.8, 1.8);
-    Distrib(	lnPSptC,	  TruncNormal_v,	M_lnPSptC   , V_lnPSptC,	   -1.8, 1.8);
-    Distrib(	lnPLungC,	  TruncNormal_v,	M_lnPLungC	, V_lnPLungC,	   -1.8, 1.8);							
+  #  Distrib(	lnPBC,	    TruncNormal_v,	M_lnPBC	    , V_lnPBC,	     -1.8, 1.8);
+  #  Distrib(	lnPFatC,	  TruncNormal_v,	M_lnPFatC   , V_lnPFatC,	   -1.8, 1.8);
+  #  Distrib(	lnPLivC,	  TruncNormal_v,	M_lnPLivC  	, V_lnPLivC,	   -1.8, 1.8);
+  #  Distrib(	lnPRptC,	  TruncNormal_v,	M_lnPRptC   , V_lnPRptC,	   -1.8, 1.8);
+  #  Distrib(	lnPSptC,	  TruncNormal_v,	M_lnPSptC   , V_lnPSptC,	   -1.8, 1.8);
+  #  Distrib(	lnPLungC,	  TruncNormal_v,	M_lnPLungC	, V_lnPLungC,	   -1.8, 1.8);							
     
-    Distrib(	lnVmaxC,	    TruncNormal_v, 	M_lnVmaxC	, V_lnVmaxC,	     -1.8, 1.8	);
-    Distrib(	lnKMC,	      TruncNormal_v,	M_lnKMC	   ,V_lnKMC,   	     -1.8, 1.8	);
+  #  Distrib(	lnVmaxC,	    TruncNormal_v, 	M_lnVmaxC	, V_lnVmaxC,	     -1.8, 1.8	);
+  #  Distrib(	lnKMC,	      TruncNormal_v,	M_lnKMC	   ,V_lnKMC,   	     -1.8, 1.8	);
     
-    Distrib(	lnVmax2C,	    TruncNormal_v, 	M_lnVmax2C, V_lnVmax2C,	     -2.4, 2.4  );
-    Distrib(	lnKM2C,	      TruncNormal_v, 	M_lnKM2C	, V_lnKM2C,	       -2.4, 2.4	);
+  #  Distrib(	lnVmax2C,	    TruncNormal_v, 	M_lnVmax2C, V_lnVmax2C,	     -2.4, 2.4  );
+  #  Distrib(	lnKM2C,	      TruncNormal_v, 	M_lnKM2C	, V_lnKM2C,	       -2.4, 2.4	);
     
-    Distrib(	lnVmaxLungC,	TruncNormal_v, 	M_lnVmaxLungC	, V_lnVmaxLungC,	  -1.8, 1.8	);
-    Distrib(	lnKMLungC,	  TruncNormal_v, 	M_lnKMLungC,    V_lnKMLungC,      -1.8, 1.8	);
+  #  Distrib(	lnVmaxLungC,	TruncNormal_v, 	M_lnVmaxLungC	, V_lnVmaxLungC,	  -1.8, 1.8	);
+  #  Distrib(	lnKMLungC,	  TruncNormal_v, 	M_lnKMLungC,    V_lnKMLungC,      -1.8, 1.8	);
     
-    Distrib  (lnVmaxRptC,	 TruncNormal_v, 	M_lnVmaxRptC, V_lnVmaxRptC,	 -1.8, 1.8);
-    Distrib  (lnKMRptC,    TruncNormal_v, 	M_lnKMRptC	, V_lnKMRptC,	   -1.8, 1.8);
+  #  Distrib  (lnVmaxRptC,	 TruncNormal_v, 	M_lnVmaxRptC, V_lnVmaxRptC,	 -1.8, 1.8);
+  #  Distrib  (lnKMRptC,    TruncNormal_v, 	M_lnKMRptC	, V_lnKMRptC,	   -1.8, 1.8);
   
   
   ############### DATA USED IN VALIDATION #############
