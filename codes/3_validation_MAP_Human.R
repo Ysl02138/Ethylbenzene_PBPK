@@ -125,8 +125,8 @@ p1 <- qt.line  |>
     breaks = trans_breaks("log10", function(x) 10^x, n = 2),
     labels = trans_format("log10", scales::math_format(10^.x))) +
   geom_line(data = p1median, aes(Time, median), color = "black") +
-  geom_line(data = p1median, aes(Time, UCL), color = "grey",lty=2) + 
-  geom_line(data = p1median, aes(Time, LCL), color = "grey",lty=2) +
+  geom_line(data = p1median, aes(Time, UCL), color = "blue",lty=2) + 
+  geom_line(data = p1median, aes(Time, LCL), color = "blue",lty=2) +
   geom_point(aes(x = Time, y = Data)) +
   facet_wrap(organs ~ label, scales = "free") +
   theme_bw() +
@@ -143,8 +143,8 @@ p2 <- qt.line  |>
     breaks = trans_breaks("log10", function(x) 10^x, n = 4),
     labels = trans_format("log10", scales::math_format(10^.x))) +
   geom_line(data = p2median, aes(Time, median), color = "black") +
-  geom_line(data = p2median, aes(Time, UCL), color = "grey",lty=2) + 
-  geom_line(data = p2median, aes(Time, LCL), color = "grey",lty=2) +
+  geom_line(data = p2median, aes(Time, UCL), color = "blue",lty=2) + 
+  geom_line(data = p2median, aes(Time, LCL), color = "blue",lty=2) +
   geom_point(aes(x = Time, y = Data)) +
   facet_wrap(organs ~ label, scales = "free") +
   theme_bw() +
@@ -162,8 +162,8 @@ p3 <- qt.line  |>
     breaks = trans_breaks("log10", function(x) 10^x, n = 3),
     labels = trans_format("log10", scales::math_format(10^.x))) +
   geom_line(data = p3median, aes(Time, median), color = "black") +
-  geom_line(data = p3median, aes(Time, UCL), color = "grey",lty=2) + 
-  geom_line(data = p3median, aes(Time, LCL), color = "grey",lty=2) +
+  geom_line(data = p3median, aes(Time, UCL), color = "blue",lty=2) + 
+  geom_line(data = p3median, aes(Time, LCL), color = "blue",lty=2) +
   geom_point(aes(x = Time, y = Data)) +
   facet_wrap(organs ~ label, scales = "free") +
   theme_bw() +
@@ -188,13 +188,13 @@ p4 <- ggplot(NHANES, aes(Type, Blood_EB)) +
   geom_violin(draw_quantiles = c(0.025, 0.5, 0.975)) + 
   scale_y_log10(lim = c(10^-6, 10^-2),
                 breaks = trans_breaks("log10", function(x) 10^x, n = 3),
-                label = trans_format("log10",math_format(10^.x))
-                ) +
+                label = trans_format("log10", math_format(10^.x))
+  ) +
   facet_wrap(organs ~ label, scales = "free") +
-  geom_point(position = position_jitter(seed = 1, width = 0.075)) +
+  geom_point(aes(color = Type), position = position_jitter(seed = 1, width = 0.075)) +
+  scale_color_manual(values = c("Data" = "black", "Prediction" = "blue")) +
   theme_bw() +
   set_theme
-
 
 # add the title and axis label
 title <- ggdraw() +
@@ -240,6 +240,6 @@ plot_grid(
     xlab, nrow = 3, rel_heights = c(0.025, 1, 0.025)),
   nrow = 1, rel_widths = c(0.02, 1)
 )
-ggsave(file = "plots/Figure_5C_MAP_Validation_Human.jpg", height = 12, width = 20, dpi = 600)
+ggsave(file = "plots/Figure_5C_MAP_Validation_Human.eps", device = cairo_ps, height = 12, width = 20, dpi = 600)
 dev.off()
 

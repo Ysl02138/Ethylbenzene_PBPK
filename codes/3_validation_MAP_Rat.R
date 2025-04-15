@@ -180,8 +180,8 @@ p1 <- qt.line  |>
                 breaks = trans_breaks("log10", function(x) 10^x, n = 4),
                 labels = trans_format("log10", scales::math_format(10^.x))) +
   geom_line(data = p1median, aes(Time, median), color = "black") +
-  geom_line(data = p1median, aes(Time, UCL), color = "grey",lty=2) + 
-  geom_line(data = p1median, aes(Time, LCL), color = "grey",lty=2) +
+  geom_line(data = p1median, aes(Time, UCL), color = "blue",lty=2) + 
+  geom_line(data = p1median, aes(Time, LCL), color = "blue",lty=2) +
   geom_point(aes(x = Time, y = Data)) +
   facet_wrap(organs ~ label, scales = "free", ncol=1) +
   theme_bw() +
@@ -199,8 +199,8 @@ p2 <- qt.line  |>
                 breaks = trans_breaks("log10", function(x) 10^x, n = 4),
                 labels = trans_format("log10", scales::math_format(10^.x))) +
   geom_line(data = p2median, aes(Time, median), color = "black") +
-  geom_line(data = p2median, aes(Time, UCL), color = "grey",lty=2) + 
-  geom_line(data = p2median, aes(Time, LCL), color = "grey",lty=2) +
+  geom_line(data = p2median, aes(Time, UCL), color = "blue",lty=2) + 
+  geom_line(data = p2median, aes(Time, LCL), color = "blue",lty=2) +
   geom_point(aes(x = Time, y = Data)) +
   facet_wrap(organs ~ label, scales = "free", ncol=1) +
   theme_bw() +
@@ -218,8 +218,8 @@ p3 <- qt.line  |>
                 breaks = trans_breaks("log10", function(x) 10^x, n = 3),
                 labels = trans_format("log10", scales::math_format(10^.x))) +
   geom_line(data = p3median, aes(Time, median), color = "black") +
-  geom_line(data = p3median, aes(Time, UCL), color = "grey",lty=2) + 
-  geom_line(data = p3median, aes(Time, LCL), color = "grey",lty=2) +
+  geom_line(data = p3median, aes(Time, UCL), color = "blue",lty=2) + 
+  geom_line(data = p3median, aes(Time, LCL), color = "blue",lty=2) +
   geom_point(aes(x = Time, y = Data)) +
   facet_wrap(organs ~ label, scales = "free", ncol=2) +
   theme_bw() +
@@ -236,8 +236,8 @@ p4 <- qt.line  |>
                 breaks = trans_breaks("log10", function(x) 10^x, n = 4),
                 labels = trans_format("log10", scales::math_format(10^.x))) +
   geom_line(data = p4median, aes(Time, median), color = "black") +
-  geom_line(data = p4median, aes(Time, UCL), color = "grey",lty=2) + 
-  geom_line(data = p4median, aes(Time, LCL), color = "grey",lty=2) +
+  geom_line(data = p4median, aes(Time, UCL), color = "blue",lty=2) + 
+  geom_line(data = p4median, aes(Time, LCL), color = "blue",lty=2) +
   geom_point(aes(x = Time, y = Data, group = 1)) +
   facet_wrap(organs ~ label, scales = "free", ncol=2) +
   theme_bw() +
@@ -288,5 +288,5 @@ plot_grid(
     xlab, nrow = 3, rel_heights = c(0.05, 1, 0.05)),
   nrow = 1, rel_widths = c(0.02, 1)
 )
-ggsave(file = "plots/Figure_5B_MAP_Validation_Rat.jpg", height = 12, width = 20, dpi = 600)
+ggsave(file = "plots/Figure_5B_MAP_Validation_Rat.eps", device = cairo_ps, height = 12, width = 20, dpi = 600)
 dev.off()

@@ -228,6 +228,6 @@ plot_grid(
     xlab, nrow = 3, rel_heights = c(0.05, 1, 0.05)),
   nrow = 1, rel_widths = c(0.02, 1)
 )
-ggsave(file = "plots/Figure_4C_calibration_Human.jpg", height = 12, width = 20, dpi = 600)
+ggsave(file = "plots/Figure_4C_calibration_Human.eps", device = cairo_ps, height = 12, width = 20, dpi = 600)
 dev.off()
 
