@@ -139,7 +139,8 @@ ggplot2::ggsave(filename = "plots/suppl/Figure_S5_density_Rat.eps",
                 units = "cm")
 ```
 
-# Correlation matrix of population posterior EB-specific parameters 
+# Correlation matrix of population posterior EB-specific paramers
+# For Supplemental Figure S8 
 ```{r}
 sim1.1 <- fread("outputs/EBRatMCMC_3365.out") 
 sim2.1 <- fread("outputs/EBRatMCMC_4880.out") 
@@ -170,6 +171,42 @@ Rat_corr[sample_x,,M_pars] %>% matrix(nrow = sum_chains) %>%
   theme_minimal() + labs(title = "Rat") + theme(plot.title = element_text(size=26, hjust = 0.5)) + theme(axis.title.x = element_blank(), axis.title.y = element_blank(), title = element_blank()) +   theme(plot.margin=grid::unit(c(0,0,0,0), "mm")) 
 ggsave("plots/suppl/Figure_S8_Correlation_matrix_Rat.jpg", dpi = 600, height = 10, width = 15, units="in")
 ```
+
+# Correlation matrix of population posterior all model parameters
+```{r}
+sim1.1 <- fread("outputs/EBRatMCMC_3365.out") 
+sim2.1 <- fread("outputs/EBRatMCMC_4880.out") 
+sim3.1 <- fread("outputs/EBRatMCMC_5916.out") 
+sim4.1 <- fread("outputs/EBRatMCMC_6734.out") 
+
+SIM1 <- do.call(rbind, list(sim1.1))
+SIM2 <- do.call(rbind, list(sim2.1))
+SIM3 <- do.call(rbind, list(sim3.1))
+SIM4 <- do.call(rbind, list(sim4.1))
+
+Rat_corr <-mcmc_array(list(SIM1, SIM2, SIM3, SIM4))
+#dim(Rat_corr)
+
+pars_name <- dimnames(Rat_corr)[[3]]
+str <- which(pars_name == "M_QCC(1)")
+end <- which(pars_name == "M_lnKpgaC(1)")
+M_pars <- pars_name[str:end]
+sample_x <- seq(100001, 200000, 10)
+Parameter <- c(M_pars) %>%
+  strsplit(split =  "\\(1\\)") %>% unlist()
+# Correlation matrix
+sum_chains <- length(sample_x)*4
+
+Rat_corr[sample_x,,M_pars] %>% matrix(nrow = sum_chains) %>%
+  `colnames<-`(Parameter[1:24]) %>%
+  ggcorr(nbreaks = 5, label = T, label_size = 4, label_round = 2, size = 4, label_alpha = TRUE) +
+  theme_minimal() + labs(title = "Rat") + theme(plot.title = element_text(size=26, hjust = 0.5)) + theme(axis.title.x = element_blank(), axis.title.y = element_blank(), title = element_blank()) +   theme(plot.margin=grid::unit(c(0,0,0,0), "mm")) 
+ggsave("plots/suppl/All_paramater_correlation_matrix_Rat.jpg", dpi = 600, height = 10, width = 15, units="in")
+```
+
+
+
+
 
 ```{r, include=FALSE}
 clear()
