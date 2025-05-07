@@ -31,7 +31,7 @@ The output of this R code script provides the results of post-MCMC diagnosis tes
 
 (d) Probability density function plots of EB-specific population parameters (Supplemental Figures S4, S5, and S6 for mouse, rat, and human, respectively).
 
-(e) Correlation matrix of population metabolism-related parameters (Supplemental Figures S7, S8, and S9 for mouse, rat, and human, respectively).
+(e) Correlation matrix of population metabolism-related parameters (Supplemental Figures S7, S8, and S9 for mouse, rat, and human, respectively). Plots showing correlations among all model parameters are also available on GitHub.
 
 3_validation_MAP_Human3.R (Step 3):  
 The output of this R code script provides the results of model fitting to validation data (Figures 5A, 5B, and 5C for mouse, rat, and human, respectively). 
