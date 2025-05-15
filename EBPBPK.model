@@ -117,7 +117,7 @@ Outputs = {
   # QFatCtmp,  # Scaled fat blood flow
   # QLivCtmp,  # Scaled liver blood flow
   # QRptCtmp,  # Scaled richly perfused blood flow
-  # QSptCtmp,  # Scaled richly perfused blood flow
+  # QSptCtmp,  # Scaled slowly perfused blood flow
   
   TotDose,               # Total inhaled dose (mg)
   DailyAMetTotalBW34,    # Daily total metabolites produced scaled by BW of 0.75 (mg/kg/d)
