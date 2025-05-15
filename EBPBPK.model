@@ -179,7 +179,7 @@ QP = 1; # respiratory ventilation
   
 QFatCtmp	= 1;	# Scaled fat blood flow
 QLivCtmp	= 1;	# Scaled liver blood flow
-QSptCtmp	= 1;	# Scaled richly perfused blood flow
+QSptCtmp	= 1;	# Scaled slowly perfused blood flow
 
 # Flow Rates (L/hr), set to default value of  0 and will be re-calculated using Supplemental Table S1 formula 
 
