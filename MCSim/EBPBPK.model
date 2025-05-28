@@ -1,4 +1,4 @@
-#########  Bayesian PBPK model for ethylbenzene (EB) #######################################################
+#########  Bayesian PBPK model for ethylbenzene (EB) updated: May 16, 2025 #################################
 # Author: Jason YS Lin (US EPA) and NH Hsieh (Texas A&M, now with California EPA). Updated: Nov 27, 2024.  #                                                            #                                   #
 # Acknowldegement: The authors would like to thank Dr Frederic Bois (Symcyps, Inc, UK) for valuable support#
 # and comments tO make the current work possible.                                                          #
@@ -204,6 +204,14 @@ QSptCtmp	= 1;	# Scaled richly perfused blood flow
   PRpt =1;      # RPT/air partition coefficient   
   PSpt =1;      # SPT/air partition coefficient   
   PLung =1;     # lung/air partition coefficient  
+  
+# For calculation purpose -- convert from tissue/air partition coefficients to tissue/blood partition coefficients
+  PFatB =1;     # fat/blood partition coefficient 
+  PLivB =1;     # liver/blood partition coefficient 
+  PRptB =1;     # RPT/blood partition coefficient   
+  PSptB =1;     # SPT/blood partition coefficient   
+  PLungB =1;    # lung/blood partition coefficient 
+  
   Vmax =1; 	    # VMax high affinity (mg/hr)
   Vmax2 =1; 	  # VMax low affinity (mg/hr); 
   KM =1; 	      # hepatic KM for high affinity (e.g., CYP2E1, mg/L)
@@ -417,12 +425,18 @@ Initialize {
   
   # Partition coefficient 	
   PB =   exp(lnPBC) * (Species == 1 ? 28: (Species == 2 ? 42.7 : (Sex == 1? 52.8: 65.4))); # blood/air partition coefficient
-  PFat = (exp(lnPFatC)/PB)  * (Species == 1 ? 1556: (Species == 2 ?  1556 : 1417)) ;       # fat/blood partition coefficient
-  PLiv = (exp(lnPLivC)/PB) * (Species == 1 ? 83.8 : (Species == 2 ? 83.8: 72.9));          # liver/blood partition coefficient
-  PRpt = (exp(lnPRptC)/PB) * (Species == 1 ? 60.3: (Species == 2 ? 60.3: 60.37));          # RPT/blood partition coefficient
-  PSpt = (exp(lnPSptC)/PB) * (Species == 1 ? 26: (Species == 2 ? 26 : 45.57));             # SPT/blood partition coefficient
-  PLung = (exp(lnPLungC)/PB) * (Species == 1 ? 63.84: (Species == 2 ? 63.84 : 63.84));     # lung/blood  partition coeff. assuming same for all
+  PFat = (exp(lnPFatC))  * (Species == 1 ? 1556: (Species == 2 ?  1556 : 1417)) ;       # fat/air partition coefficient
+  PLiv = (exp(lnPLivC)) * (Species == 1 ? 83.8 : (Species == 2 ? 83.8: 72.9));          # liver/air partition coefficient
+  PRpt = (exp(lnPRptC)) * (Species == 1 ? 60.3: (Species == 2 ? 60.3: 60.37));          # RPT/air partition coefficient
+  PSpt = (exp(lnPSptC)) * (Species == 1 ? 26: (Species == 2 ? 26 : 45.57));             # SPT/air partition coefficient
+  PLung = (exp(lnPLungC)) * (Species == 1 ? 63.84: (Species == 2 ? 63.84 : 63.84));     # lung/air partition coeff. assuming same for all
   
+  # For calculation purpose
+  PFatB = PFat/PB;   # fat/blood partition coefficient
+  PLivB = PLivB/PB;  # liver/blood partition coefficient
+  PRpB  = PRpt/PB;   # RPT/blood partition coefficient
+  PSptB = PSpt/PB;   # SPT/blood partition coefficient
+  PLungB = PLung/PB; # lung/blood partition coeff. 
   
 ######### Metabolism parameters################################################# 
 
@@ -530,13 +544,13 @@ Dynamics {
   CLung = (ALung/VLung);      # EB in lung
   
   # tissue venous blood (mg/L)
-  CVRpt = (ARpt/VRpt)/ PRpt;  # EB in venous blood leaving the RPT tissue
-  CVSpt = (ASpt/VSpt)/ PSpt;  # EB in venous blood leaving the SPT tissue
-  CVFat = (AFat/VFat)/ PFat;  # EB in venous blood leaving the Fat tissue
-  CVLiv = (ALiv/VLiv) / PLiv; # EB in venous blood leaving the liver tissue
+  CVRpt = (ARpt/VRpt)/ (PRptB);  # EB in venous blood leaving the RPT tissue, note that PRptB = (PRpt/PB)
+  CVSpt = (ASpt/VSpt)/ (PSptB);  # EB in venous blood leaving the SPT tissue
+  CVFat = (AFat/VFat)/ (PFatB);  # EB in venous blood leaving the Fat tissue
+  CVLiv = (ALiv/VLiv) / (PLivB); # EB in venous blood leaving the liver tissue
   
   CV = (QFat*CVFat + QSpt*CVSpt + QLiv*CVLiv + QRpt*CVRpt)/ QC;  # EB in mixed venous blood (mg/L)
-  Cart =ALung / (VLung*PLung);                                   # EB in arterial blood (mg/L)   
+  Cart =ALung / (VLung*PLungB);                                  # EB in arterial blood (mg/L), PLungB  =  (PLung/PB)
   Calv = Cart /PB;                                               # alveolar EB conc. (mg/L)
   CalvPPM = (Calv < 1.0e-15 ? 1.0e-15 : Calv*(24.45*1000)/MWEB); # alveolar EB conc. (ppm)
 
